@@ -1,0 +1,167 @@
+{% extends "templates/Admintemplate.html" %}
+{% block content %}
+<!-- Content Header (Page header) -->
+       <section class="content-header">
+           <H1>
+               Answers Module
+           </H1>
+    {% with messages = get_flashed_messages() %}
+	  {% if messages %}
+	    {% for message in messages %}
+		  <div class="alert alert-warning alert-dismissible" role="alert">
+		  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+			{{message}}
+		  </div>
+		{% endfor %}
+	  {% endif %}
+	{% endwith %}
+    <ol class="breadcrumb">
+        <li><a href="{{url_for('dashboard')}}"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Answers</li>
+    </ol>
+</section>
+        <section class="content">
+<div align="center">
+    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#AddAnswerModal">
+                    Add Answer
+    </button>
+</div>
+    <div class="box-body">
+        <table id="levelInstitution" class="table table-bordered table-striped">
+    <thead  style="color:white">
+    <tr bgcolor="#605ca8">
+        <th><div class="fa fa-sort"/> ID</th>
+        <th><div class="fa fa-sort"/> Answer</th>
+        <th><div class="fa fa-sort"/> Score</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for u in AnswerList %}
+    <tr>
+        <td>{{u.AnswerID}}</td>
+        <td>{{u.AnswerDesc}}</td>
+        <td>{{u.Score}}</td>
+        <td>
+            <!-- Tasks: style can be found in dropdown.less -->
+            <l class="dropdown tasks-menu">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    <i class="fa fa-fw fa-gear"></i>
+                </a>
+                <ul class="dropdown-menu pull-right">
+                    <li data-toggle="modal" data-target="#EditLevel{{u.AnswerID }}"><i
+                            class="fa fa-fw fa-edit"></i>Edit
+                    </li>
+                    <li data-toggle="modal" data-target="#Delete{{u.AnswerID }}"><i
+                            class="fa fa-fw fa-trash"></i> Delete
+                    </li>
+                </ul>
+            </l>
+        </td>
+        <!--- New Institution Level -->
+        <div id="EditLevel{{u.AnswerID}}" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form method="post" action="{{url_for('editAnswer')}}">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title">Edit Question</h4>
+                            </div>
+                            <div class="modal-body">
+
+                                <div class="box-body">
+                                    <label class="col-sm-2 control-label">Answer</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" name="Answer" value="{{u.AnswerDesc}}" maxlength="500" required>
+                                        <br>
+                                    </div>
+                                    <br>
+                                    <label class="col-sm-2 control-label">Score (1-5)</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" name="Score" value="{{u.Score}}" pattern="[0-9]{1}" required>
+                                        <br>
+                                    </div>
+                                    <br>
+                                </div>
+                            </div>
+                            <!-- /.box-body -->
+                            <input type="hidden" name="AnswerID" value="{{u.AnswerID}}">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Update</button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+        <div id="Delete{{u.AnswerID}}" class="modal fade" role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">
+                                Are you Sure you want to delete the below Question?
+                            </h4>
+                        </div>
+                        <div class="modal-body">
+                            {{u.AnswerID}} {{u.AnswerDesc}}
+                        </div>
+                        <form method="POST" action="{{url_for('DeleteAnswer')}}">
+                            <div class="modal-footer">
+                                <input type="hidden" name="AnswerID" value="{{u.AnswerID}}">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel
+                                </button>
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+        <div class="modal fade" id="AddAnswerModal" >
+        <div class="modal-dialog">
+            <form method="post" action="{{url_for('addAnswer')}}">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">Add Answer</h4>
+                    </div>
+                    <div class="modal-body">
+
+                        <div class="box-body">
+                            <label class="col-sm-2 control-label">Answer</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" name="Answer" maxlength="500" required>
+                                <br>
+                            </div>
+                            <br>
+                            <label class="col-sm-2 control-label">Score (1-5)</label>
+                            <div class="col-sm-10">
+                                <input type="number" class="form-control" name="Score" pattern="[0-5]{1-5}" required>
+                                <br>
+                            </div>
+                        </div>
+                        <!-- /.box-body -->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Add Answer</button>
+                    </div>
+                </div>
+            </form>
+            <!-- /.modal-content -->
+        </div>
+
+        <!-- /.modal-dialog -->
+    </div>
+    </div>
+        </section>
+{% endblock %}

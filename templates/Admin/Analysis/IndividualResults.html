@@ -1,0 +1,898 @@
+{% extends "templates/Admintemplate.html" %}
+{% block content %}
+<style>
+#IQScales {
+  width: 100%;
+  height: 400px;
+}
+#AnxietyGague {
+  width: 100%;
+  height: 200px;
+}
+#PersonalityPie {
+  width: 100%;
+  height: 400px;
+}
+#PTSDGauge {
+  width: 100%;
+  height: 200px;
+}
+
+#DepressionGauge {
+  width: 100%;
+  height: 200px;
+}
+
+#AngerGauge {
+  width: 100%;
+  height: 200px;
+}
+
+</style>
+
+<script>
+
+am4core.ready(function() {
+
+// Themes begin
+am4core.useTheme(am4themes_animated);
+// Themes end
+
+// Create chart instance
+var chart = am4core.create("personalityDetail", am4charts.XYChart);
+chart.scrollbarX = new am4core.Scrollbar();
+
+
+// Add data
+chart.data =[
+
+ {
+ "Attribute": "Extraversion",
+  "Score": "{{Extraversion}}"
+  },
+  {
+ "Attribute": "Withdrawal",
+  "Score": "{{Withdrawal}}"
+  },
+  {
+ "Attribute": "Volatility",
+  "Score": "{{Volatility}}"
+  },
+  {
+ "Attribute": "Politeness",
+  "Score": "{{Politeness}}"
+  },
+  {
+ "Attribute": "Orderliness",
+  "Score": "{{Orderliness}}"
+  },
+  {
+ "Attribute": "Openness",
+  "Score": "{{Openness}}"
+  },
+  {
+ "Attribute": "Intellect",
+  "Score": "{{Intellect}}"
+  },
+  {
+ "Attribute": "Industriousness",
+  "Score": "{{Industriousness}}"
+  },
+  {
+ "Attribute": "Enthusiasm",
+  "Score": "{{Enthusiasm}}"
+  },
+  {
+ "Attribute": "Assertiveness",
+  "Score": "{{Assertiveness}}"
+  },
+  {
+ "Attribute": "Neuroticism",
+  "Score": "{{Neuroticism}}"
+  },
+  {
+ "Attribute": "Compassion",
+  "Score": "{{Compassion}}"
+  },
+  {
+ "Attribute": "Agreeableness",
+  "Score": "{{Agreeableness}}"
+  },
+  {
+ "Attribute": "Consientious",
+  "Score": "{{Consientious}}"
+  },
+  {
+ "Attribute": "Openess to Experience",
+  "Score": "{{Openess_to_Experience}}"
+  },
+];
+
+// Create axes
+var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+categoryAxis.dataFields.category = "Attribute";
+categoryAxis.renderer.grid.template.location = 0;
+categoryAxis.renderer.minGridDistance = 30;
+categoryAxis.renderer.labels.template.horizontalCenter = "right";
+categoryAxis.renderer.labels.template.verticalCenter = "middle";
+categoryAxis.renderer.labels.template.rotation = 270;
+categoryAxis.tooltip.disabled = true;
+categoryAxis.renderer.minHeight = 110;
+
+var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+valueAxis.renderer.minWidth = 50;
+
+// Create series
+var series = chart.series.push(new am4charts.ColumnSeries());
+series.sequencedInterpolation = true;
+series.dataFields.valueY = "Score";
+series.dataFields.categoryX = "Attribute";
+series.tooltipText = "[{categoryX}: bold]{valueY}[/]";
+series.columns.template.strokeWidth = 0;
+
+series.tooltip.pointerOrientation = "vertical";
+
+series.columns.template.column.cornerRadiusTopLeft = 10;
+series.columns.template.column.cornerRadiusTopRight = 10;
+series.columns.template.column.fillOpacity = 0.8;
+
+// on hover, make corner radiuses bigger
+var hoverState = series.columns.template.column.states.create("hover");
+hoverState.properties.cornerRadiusTopLeft = 0;
+hoverState.properties.cornerRadiusTopRight = 0;
+hoverState.properties.fillOpacity = 1;
+
+series.columns.template.adapter.add("fill", function(fill, target) {
+  return chart.colors.getIndex(target.dataItem.index);
+});
+
+// Cursor
+chart.cursor = new am4charts.XYCursor();
+
+}); // end am4core.ready()
+
+</script>
+<script>
+       $(function() {
+
+  var rawData = {{AvgPTSD}},
+    data = getData(rawData);
+
+  function getData(rawData) {
+    var data = [],
+      start = Math.round(Math.floor(rawData / 10) * 10);
+    data.push(rawData);
+    for (i = start; i > 0; i -= 10) {
+      data.push({
+        y: i
+      });
+    }
+    return data;
+  }
+
+  Highcharts.chart('PTSDGauge', {
+    chart: {
+      type: 'solidgauge',
+      marginTop: 2
+    },
+
+    title: {
+      text: '',
+    },
+
+    subtitle: {
+      text: rawData,
+      style: {
+        'font-size': '60px'
+      },
+      y: 100,
+      zIndex: 7
+    },
+
+    tooltip: {
+      enabled: false
+    },
+
+    pane: [{
+      startAngle: -120,
+      endAngle: 120,
+      background: [{ // Track for Move
+        outerRadius: '100%',
+        innerRadius: '80%',
+        backgroundColor: Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0.3).get(),
+        borderWidth: 0,
+        shape: 'arc'
+      }],
+      size: '120%',
+      center: ['50%', '65%']
+    }, {
+      startAngle: -120,
+      endAngle: 120,
+      size: '95%',
+      center: ['50%', '65%'],
+      background: []
+    }],
+
+    yAxis: [{
+      min: 0,
+      max: 100,
+      lineWidth: 2,
+      lineColor: 'white',
+      tickInterval: 10,
+      labels: {
+        enabled: false
+      },
+      minorTickWidth: 0,
+      tickLength: 50,
+      tickWidth: 5,
+      tickColor: 'white',
+      zIndex: 6,
+      stops: [
+        [0, '#fff'],
+        [0.101, '#0f0'],
+        [0.201, '#2d0'],
+        [0.301, '#4b0'],
+        [0.401, '#690'],
+        [0.501, '#870'],
+        [0.601, '#a50'],
+        [0.701, '#c30'],
+        [0.801, '#e10'],
+        [0.901, '#f03'],
+        [1, '#f06']
+      ]
+    }, {
+      linkedTo: 0,
+      pane: 1,
+      lineWidth: 5,
+      lineColor: 'white',
+      tickPositions: [],
+      zIndex: 6
+    }],
+
+    series: [{
+      animation: false,
+      dataLabels: {
+        enabled: false
+      },
+      borderWidth: 0,
+      color: Highcharts.getOptions().colors[0],
+      radius: '100%',
+      innerRadius: '80%',
+      data: data
+    }]
+  });
+});
+
+
+</script>
+<script>
+       $(function() {
+
+  var rawData = {{AvgAnxiety}},
+    data = getData(rawData);
+
+  function getData(rawData) {
+    var data = [],
+      start = Math.round(Math.floor(rawData / 10) * 10);
+    data.push(rawData);
+    for (i = start; i > 0; i -= 10) {
+      data.push({
+        y: i
+      });
+    }
+    return data;
+  }
+
+  Highcharts.chart('AnxietyGague', {
+    chart: {
+      type: 'solidgauge',
+      marginTop: 10
+    },
+
+    title: {
+      text: ''
+    },
+
+     subtitle: {
+      text: rawData,
+      style: {
+        'font-size': '60px'
+      },
+      y: 100,
+      zIndex: 7
+    },
+
+    tooltip: {
+      enabled: false
+    },
+
+    pane: [{
+      startAngle: -120,
+      endAngle: 120,
+      background: [{ // Track for Move
+        outerRadius: '100%',
+        innerRadius: '80%',
+        backgroundColor: Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0.3).get(),
+        borderWidth: 0,
+        shape: 'arc'
+      }],
+      size: '120%',
+      center: ['50%', '65%']
+    }, {
+      startAngle: -120,
+      endAngle: 120,
+      size: '95%',
+      center: ['50%', '65%'],
+      background: []
+    }],
+
+    yAxis: [{
+      min: 0,
+      max: 100,
+      lineWidth: 2,
+      lineColor: 'white',
+      tickInterval: 10,
+      labels: {
+        enabled: false
+      },
+      minorTickWidth: 0,
+      tickLength: 50,
+      tickWidth: 5,
+      tickColor: 'white',
+      zIndex: 6,
+      stops: [
+        [0, '#fff'],
+        [0.101, '#0f0'],
+        [0.201, '#2d0'],
+        [0.301, '#4b0'],
+        [0.401, '#690'],
+        [0.501, '#870'],
+        [0.601, '#a50'],
+        [0.701, '#c30'],
+        [0.801, '#e10'],
+        [0.901, '#f03'],
+        [1, '#f06']
+      ]
+    }, {
+      linkedTo: 0,
+      pane: 1,
+      lineWidth: 5,
+      lineColor: 'white',
+      tickPositions: [],
+      zIndex: 6
+    }],
+
+    series: [{
+      animation: false,
+      dataLabels: {
+        enabled: false
+      },
+      borderWidth: 0,
+      color: Highcharts.getOptions().colors[0],
+      radius: '100%',
+      innerRadius: '80%',
+      data: data
+    }]
+  });
+});
+
+
+</script>
+
+<script>
+       $(function() {
+
+  var rawData = {{AvgDepression}},
+    data = getData(rawData);
+
+  function getData(rawData) {
+    var data = [],
+      start = Math.round(Math.floor(rawData / 10) * 10);
+    data.push(rawData);
+    for (i = start; i > 0; i -= 10) {
+      data.push({
+        y: i
+      });
+    }
+    return data;
+  }
+
+  Highcharts.chart('DepressionGauge', {
+    chart: {
+      type: 'solidgauge',
+      marginTop: 10
+    },
+
+    title: {
+      text: ''
+    },
+
+   subtitle: {
+      text: rawData,
+      style: {
+        'font-size': '60px'
+      },
+      y: 100,
+      zIndex: 7
+    },
+
+    tooltip: {
+      enabled: false
+    },
+
+    pane: [{
+      startAngle: -120,
+      endAngle: 120,
+      background: [{ // Track for Move
+        outerRadius: '100%',
+        innerRadius: '80%',
+        backgroundColor: Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0.3).get(),
+        borderWidth: 0,
+        shape: 'arc'
+      }],
+      size: '120%',
+      center: ['50%', '65%']
+    }, {
+      startAngle: -120,
+      endAngle: 120,
+      size: '95%',
+      center: ['50%', '65%'],
+      background: []
+    }],
+
+    yAxis: [{
+      min: 0,
+      max: 100,
+      lineWidth: 2,
+      lineColor: 'white',
+      tickInterval: 10,
+      labels: {
+        enabled: false
+      },
+      minorTickWidth: 0,
+      tickLength: 50,
+      tickWidth: 5,
+      tickColor: 'white',
+      zIndex: 6,
+      stops: [
+        [0, '#fff'],
+        [0.101, '#0f0'],
+        [0.201, '#2d0'],
+        [0.301, '#4b0'],
+        [0.401, '#690'],
+        [0.501, '#870'],
+        [0.601, '#a50'],
+        [0.701, '#c30'],
+        [0.801, '#e10'],
+        [0.901, '#f03'],
+        [1, '#f06']
+      ]
+    }, {
+      linkedTo: 0,
+      pane: 1,
+      lineWidth: 5,
+      lineColor: 'white',
+      tickPositions: [],
+      zIndex: 6
+    }],
+
+    series: [{
+      animation: false,
+      dataLabels: {
+        enabled: false
+      },
+      borderWidth: 0,
+      color: Highcharts.getOptions().colors[0],
+      radius: '100%',
+      innerRadius: '80%',
+      data: data
+    }]
+  });
+});
+
+
+</script>
+<script>
+       $(function() {
+
+  var rawData = {{AvgAngetMmanagement}},
+    data = getData(rawData);
+
+  function getData(rawData) {
+    var data = [],
+      start = Math.round(Math.floor(rawData / 10) * 10);
+    data.push(rawData);
+    for (i = start; i > 0; i -= 10) {
+      data.push({
+        y: i
+      });
+    }
+    return data;
+  }
+
+  Highcharts.chart('AngerGauge', {
+    chart: {
+      type: 'solidgauge',
+      marginTop: 10
+    },
+
+    title: {
+      text: ''
+    },
+
+   subtitle: {
+      text: rawData,
+      style: {
+        'font-size': '60px'
+      },
+      y: 100,
+      zIndex: 7
+    },
+
+    tooltip: {
+      enabled: false
+    },
+
+    pane: [{
+      startAngle: -120,
+      endAngle: 120,
+      background: [{ // Track for Move
+        outerRadius: '100%',
+        innerRadius: '80%',
+        backgroundColor: Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0.3).get(),
+        borderWidth: 0,
+        shape: 'arc'
+      }],
+      size: '120%',
+      center: ['50%', '65%']
+    }, {
+      startAngle: -120,
+      endAngle: 120,
+      size: '95%',
+      center: ['50%', '65%'],
+      background: []
+    }],
+
+    yAxis: [{
+      min: 0,
+      max: 100,
+      lineWidth: 2,
+      lineColor: 'white',
+      tickInterval: 10,
+      labels: {
+        enabled: false
+      },
+      minorTickWidth: 0,
+      tickLength: 50,
+      tickWidth: 5,
+      tickColor: 'white',
+      zIndex: 6,
+      stops: [
+        [0, '#fff'],
+        [0.101, '#0f0'],
+        [0.201, '#2d0'],
+        [0.301, '#4b0'],
+        [0.401, '#690'],
+        [0.501, '#870'],
+        [0.601, '#a50'],
+        [0.701, '#c30'],
+        [0.801, '#e10'],
+        [0.901, '#f03'],
+        [1, '#f06']
+      ]
+    }, {
+      linkedTo: 0,
+      pane: 1,
+      lineWidth: 5,
+      lineColor: 'white',
+      tickPositions: [],
+      zIndex: 6
+    }],
+
+    series: [{
+      animation: false,
+      dataLabels: {
+        enabled: false
+      },
+      borderWidth: 0,
+      color: Highcharts.getOptions().colors[0],
+      radius: '100%',
+      innerRadius: '80%',
+      data: data
+    }]
+  });
+});
+
+
+</script>
+<script>
+am4core.ready(function() {
+
+// Themes begin
+am4core.useTheme(am4themes_animated);
+// Themes end
+
+var chart = am4core.create("PersonalityPie", am4charts.PieChart3D);
+chart.hiddenState.properties.opacity = 0; // this creates initial fade-in
+
+chart.legend = new am4charts.Legend();
+chart.data =[
+
+ {
+ "Attribute": "Extraversion",
+  "Score": "{{Extraversion}}"
+  },
+  {
+ "Attribute": "Withdrawal",
+  "Score": "{{Withdrawal}}"
+  },
+  {
+ "Attribute": "Volatility",
+  "Score": "{{Volatility}}"
+  },
+  {
+ "Attribute": "Politeness",
+  "Score": "{{Politeness}}"
+  },
+  {
+ "Attribute": "Orderliness",
+  "Score": "{{Orderliness}}"
+  },
+  {
+ "Attribute": "Openness",
+  "Score": "{{Openness}}"
+  },
+  {
+ "Attribute": "Intellect",
+  "Score": "{{Intellect}}"
+  },
+  {
+ "Attribute": "Industriousness",
+  "Score": "{{Industriousness}}"
+  },
+  {
+ "Attribute": "Enthusiasm",
+  "Score": "{{Enthusiasm}}"
+  },
+  {
+ "Attribute": "Assertiveness",
+  "Score": "{{Assertiveness}}"
+  },
+  {
+ "Attribute": "Neuroticism",
+  "Score": "{{Neuroticism}}"
+  },
+  {
+ "Attribute": "Compassion",
+  "Score": "{{Compassion}}"
+  },
+  {
+ "Attribute": "Agreeableness",
+  "Score": "{{Agreeableness}}"
+  },
+  {
+ "Attribute": "Consientious",
+  "Score": "{{Consientious}}"
+  },
+  {
+ "Attribute": "Openess to Experience",
+  "Score": "{{Openess_to_Experience}}"
+  },
+];
+
+var series = chart.series.push(new am4charts.PieSeries3D());
+series.dataFields.value = "Score";
+series.dataFields.category = "Attribute";
+
+}); // end am4core.ready()
+
+
+
+
+
+</script>
+       <section class="content-header">
+           <H1>
+               Individual Results for <b>{{UserProfile.Sur_Name}} {{UserProfile.Other_Names}}</b>
+           </H1>
+    {% with messages = get_flashed_messages() %}
+	  {% if messages %}
+	    {% for message in messages %}
+		  <div class="alert alert-warning alert-dismissible" role="alert">
+		  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+			{{message}}
+		  </div>
+		{% endfor %}
+	  {% endif %}
+	{% endwith %}
+    <ol class="breadcrumb">
+        <li><a href="{{url_for('dashboard')}}"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Individual Results ({{UserProfile.Sur_Name}} {{UserProfile.Other_Names}})</li>
+    </ol>
+</section>
+<div class="container">
+    <div class="row">
+        <div class="col-xs-12 col-sm-6 col-md-6">
+            <div class="well well-sm">
+                <div class="row">
+                    <form action="{{url_for('IndividualResults')}}" method="post">
+                        <div align="left" aria-colspan="6">
+                            <select name="UserSelected" class="form-control select2" required
+                                    onchange="this.form.submit()">
+                                <option value="">Select Individual</option>
+                                {% for CP in User_List%}
+                                <option value="{{CP.id}}">{{CP.Sur_Name}} {{CP.Other_Names}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-12 col-sm-6 col-md-6">
+            <div class="well well-sm">
+                <div class="row">
+                    <div class="col-sm-6 col-md-4">
+                        <img src="{{url_for('static', filename='img/logo.png')}}" alt=""
+                             class="img-rounded img-responsive"/>
+                    </div>
+                    <div class="col-sm-6 col-md-8">
+                        <h4>
+                            {{UserProfile.Sur_Name}} {{UserProfile.Other_Names}}</h4>
+                        <small><cite title="{{UserProfile.Nationality}}"> <b>{{UserProfile.Nationality}}</b><i
+                                class="glyphicon glyphicon-map-marker">
+                        </i></cite></small>
+                        <p>
+                            <i class="glyphicon glyphicon-envelope"></i><b> {{UserProfile.EmailAddress}}</b>
+                            <br/>
+                            <i class="fa fa-venus-mars custom"></i> <b>{{UserProfile.Gender}}</b>
+                            <br/>
+                            <i class="glyphicon glyphicon-gift"></i> <b>{{UserProfile.DoB}}</b></p><br/>
+                        <i>IQ Score</i>
+                        <H2><b>{{AvgIQ}}</b></H2></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="mapPersonality">
+        <div id="personalityDetail"></div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-2 col-md-6 col-lg-12">
+        <div id="PersonalityPie"></div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-2 col-md-6 col-lg-6">
+        <div align="center"><h3>P.T.S.D Score</h3></div>
+        <div id="PTSDGauge"></div>
+    </div>
+    <div class="col-sm-2 col-md-6 col-lg-6">
+        <div align="center"><h3>Anxiety Score</h3></div>
+        <div id="AnxietyGague"></div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-3 col-md-6 col-lg-6">
+        <div align="center"><h3>Depression Score</h3></div>
+        <div id="DepressionGauge"></div>
+    </div>
+    <div class="col-sm-3 col-md-6 col-lg-6">
+        <div align="center"><h3>Anger Management Score</h3></div>
+        <div id="AngerGauge"></div>
+    </div>
+</div>
+<div class="box-body">
+
+    <table id="Big5Results" class="table table-bordered table-striped table-hover">
+        <thead style="color:white">
+        <tr bgcolor="#605ca8">
+            <th>
+                <div class="fa fa-sort"/>
+                Test
+            </th>
+            <th>
+                <div class="fa fa-sort"/>
+                Type
+            </th>
+            <th>
+                <div class="fa fa-sort"/>
+                Testing Status
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for u in UserPersonality %}
+        <tr>
+            <td>{{u.Name}} {{u.ID}}</td>
+            <td>{{u.TestType}}</td>
+            <td
+                    {% if u.TestStatus=="Completed" %}
+                    bgcolor="Lime"
+                    {% else %}
+                    bgcolor="Yellow"
+                    {% endif %}
+            >{{u.TestStatus}}
+            </td>
+            {% endfor %}
+    </table>
+    <div class="table-wrapper" style="overflow: auto;">
+
+        <table cellspacing="0" id="example1" class="table table-bordered table-striped table-hover">
+            <thead style="color:white; height: 0;">
+            <tr bgcolor="#605ca8">
+                <th>TestID</th>
+                <th bgcolor="#26282b">Test Name</th>
+                <th>Extraversion</th>
+                <th>Neuroticism</th>
+                <th>Agreeableness</th>
+                <th>Consientious</th>
+                <th>Compassion</th>
+                <th>Politeness</th>
+                <th>Industriousness</th>
+                <th>Orderliness</th>
+                <th>Enthusiasm</th>
+                <th>Assertiveness</th>
+                <th>Withdrawal</th>
+                <th>Volatility</th>
+                <th>Intellect</th>
+                <th>Openess to Experience</th>
+                <th>Openness</th>
+                <th>Personality</th>
+            </tr>
+            <tbody>
+            <tr>
+                <th>0</th>
+                <th bgcolor="#26282b"><font color="#e3f4f3">All Tests</font></th>
+                <th bgcolor="#FFFF00">{{Extraversion}}</th>
+                <th bgcolor="#FFFF00">{{Neuroticism}}</th>
+                <th bgcolor="#FFFF00">{{Agreeableness}}</th>
+                <th bgcolor="#FFFF00">{{Consientious}}</th>
+                <th bgcolor="#FFFF00">{{Compassion}}</th>
+                <th bgcolor="#FFFF00">{{Politeness}}</th>
+                <th bgcolor="#FFFF00">{{Industriousness}}</th>
+                <th bgcolor="#FFFF00">{{Orderliness}}</th>
+                <th bgcolor="#FFFF00">{{Enthusiasm}}</th>
+                <th bgcolor="#FFFF00">{{Assertiveness}}</th>
+                <th bgcolor="#FFFF00">{{Withdrawal}}</th>
+                <th bgcolor="#FFFF00">{{Volatility}}</th>
+                <th bgcolor="#FFFF00">{{Intellect}}</th>
+                <th bgcolor="#FFFF00">{{Openess_to_Experience}}</th>
+                <th bgcolor="#FFFF00">{{Openness}}</th>
+                <th></th>
+            </tr>
+            {% for T in UserResults %}
+
+            <tr>
+                <th>{{T.TestID}} {{T.UserID}}</th>
+                <th bgcolor="#26282b"><font color="#e3f4f3">{{T.Name}}</font></th>
+                <th>{{T.Extraversion}}</th>
+                <th>{{T.Neuroticism}}</th>
+                <th>{{T.Agreeableness}}</th>
+                <th>{{T.Consientious}}</th>
+                <th>{{T.Compassion}}</th>
+                <th>{{T.Politeness}}</th>
+                <th>{{T.Industriousness}}</th>
+                <th>{{T.Orderliness}}</th>
+                <th>{{T.Enthusiasm}}</th>
+                <th>{{T.Assertiveness}}</th>
+                <th>{{T.Withdrawal}}</th>
+                <th>{{T.Volatility}}</th>
+                <th>{{T.Intellect}}</th>
+                <th>{{T.Openess_to_Experience}}</th>
+                <th>{{T.Openness}}</th>
+                <th>{{T.TestType}}</th>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+    </div><!-- /table-wrapper -->
+
+</div>
+
+{% endblock %}

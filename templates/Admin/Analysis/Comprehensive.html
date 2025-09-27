@@ -1,0 +1,77 @@
+{% extends "templates/Admintemplate.html" %}
+{% block content %}
+       <section class="content-header">
+           <H1>
+               Personality Results Analysis Module
+           </H1>
+    {% with messages = get_flashed_messages() %}
+	  {% if messages %}
+	    {% for message in messages %}
+		  <div class="alert alert-warning alert-dismissible" role="alert">
+		  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+			{{message}}
+		  </div>
+		{% endfor %}
+	  {% endif %}
+	{% endwith %}
+    <ol class="breadcrumb">
+        <li><a href="{{url_for('dashboard')}}"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Personality Results</li>
+    </ol>
+</section>
+    <div align="center"><b><h4>Candidates Scores On the BIG 5 Personality Test <u>(0 being lowest and 100 being Highest)</u></h4></b></div>
+
+<div class="box-body">
+    <table id="MyTable2" class="table table-bordered table-striped table-hover">
+        <thead>
+        <tr>
+            <th>Test</th>
+            <th>Candidate</th>
+            <th>Neuroticism</th>
+            <th>Extraversion</th>
+            <th>Agreeableness</th>
+            <th>Compassion</th>
+            <th>Conscientiousness</th>
+            <th>Assertiveness</th>
+            <th>Enthusiasm</th>
+            <th>Industriousness</th>
+            <th>Intellect</th>
+            <th>Openness</th>
+            <th>Openness_to_Experience</th>
+            <th>Orderliness</th>
+            <th>Volatility</th>
+            <th>Politeness</th>
+            <th>Withdrawal</th>
+            <th>Date Created</th>
+        </tr>
+        </thead>
+         <tbody>
+        {% for u in ComprehensiveResults %}
+        <tr>
+            <td>{{u.TestID}}</td>
+            <td>{{u.UserID}}</td>
+            <td>{{u.Neuroticism}}</td>
+            <td>{{u.Extraversion}}</td>
+            <td>{{u.Agreeableness}}</td>
+            <td>{{u.Compassion}}</td>
+            <td>{{u.Conscientiousness}}</td>
+            <td>{{u.Assertiveness}}</td>
+            <td>{{u.Enthusiasm}}</td>
+            <td>{{u.Industriousness}}</td>
+            <td>{{u.Intellect}}</td>
+            <td>{{u.Openness}}</td>
+            <td>{{u.Openness_to_Experience}}</td>
+            <td>{{u.Orderliness}}</td>
+            <td>{{u.Volatility}}</td>
+            <td>{{u.Politeness}}</td>
+            <td>{{u.Withdrawal}}</td>
+            <td>{{u.timestamp}}</td>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}
+
+
+
+
+

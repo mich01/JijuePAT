@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>SaikoloJi - PAT</title>
+    <link rel = "icon" href ="{{url_for('static', filename='img/logo.png')}}" type = "image/x-icon">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- MATERIAL DESIGN ICONIC FONT -->
+    <link rel="stylesheet"
+          href="{{url_for('static', filename='login/fonts/material-design-iconic-font/css/material-design-iconic-font.min.css')}}">
+
+    <!-- STYLE CSS -->
+    <link rel="stylesheet" href="{{url_for('static', filename='login/css/style.css')}}">
+</head>
+
+<body>
+
+<div class="wrapper"
+     style="background-image: url('{{url_for('static', filename='img/logo.png')}}'); background-size:cover;">
+     {% block content %}
+     {% endblock %}
+</div>
+</body><!-- This templates was made by Colorlib (https://colorlib.com) -->
+</html>

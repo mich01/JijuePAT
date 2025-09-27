@@ -1,0 +1,139 @@
+{% extends "templates/Admintemplate.html" %}
+{% block content %}
+<!-- Content Header (Page header) -->
+       <section class="content-header">
+           <H1>
+               Counselors Assignment Module
+           </H1>
+    {% with messages = get_flashed_messages() %}
+	  {% if messages %}
+	    {% for message in messages %}
+		  <div class="alert alert-warning" role="alert">
+		  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+			{{message}}
+		  </div>
+		{% endfor %}
+	  {% endif %}
+	{% endwith %}
+    <ol class="breadcrumb">
+        <li><a href="{{url_for('dashboard')}}"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Counselor Assignment</li>
+    </ol>
+</section>
+<section class="content">
+    <!-- /.box-header -->
+    <div class="box-body">
+        <form action="{{url_for('loadClients')}}" method="post">
+            <table class="table table-bordered">
+                <tr>
+                    <td>
+                        Selected Counselor {% for D in Counselor_List %}
+                                                    {% if D.id|int == CounselorID |int%}
+                                                    <b>{{D.Sur_Name}} {{D.Other_Names}}</b>
+                                                    {% endif %}
+                                                    {% endfor %}
+                        <div align="left" aria-colspan="6">
+                            <select name="Counselor" class="form-control select2" required
+                                    onchange="this.form.submit()">
+                                <option selected value="">Select Counselor to Assign</option>
+                                {% for CP in Counselor_List%}
+                                <option value="{{CP.id}}"> {{CP.Sur_Name}} {{CP.Other_Names}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </td>
+                    <td>
+                        <div align="center">
+                            <button type="submit" class="btn btn-block btn-primary">Assign Users</button>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </form>
+        <br>
+            <table id="example1" class="table table-bordered table-striped">
+                <thead style="color:white">
+                <tr bgcolor="#605ca8">
+                    <th>ID</th>
+                    <th>Full Names</th>
+                    <th>Counselor</th>
+                    <th>Current Status</th>
+                    <th>Select</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for u in Client_list %}
+                <tr>
+                    <td>{{u.id}}</td>
+                    <td>{{u.Other_Names}} {{u.Sur_Name}}</td>
+                    <td>
+                        {% for C in Counselor_List %}
+                        {% if C.id == u.AssessorID %}
+                        {{C.Sur_Name}} {{C.Other_Names}}
+                        {% endif %}
+                        {% endfor %}
+                    </td>
+                    <td>{{u.Status_type}}</td>
+                    <td>
+                        <input type="hidden" name="RowID" value="{{u.id}}"/>
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal{{u.id}}">
+                            Assign
+                        </button>
+                    </td>
+                    <div id="modal{{u.id}}" class="modal fade" role="dialog">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <form method="post" action="{{url_for('AssignCounselor')}}">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span></button>
+                                            <h4 class="modal-title">Assign Counselor</h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            <input type="hidden" name="CID" value="{{CounselorID}}"/>
+                                            <input type="hidden" value="{{u.id}}" id="UID"name="UID"/>
+                                            <div class="box-body">
+                                                <div class="col-sm-10">
+                                                    Would you like to assign <b>{{u.Other_Names}} {{u.Sur_Name}}</b> to
+                                                    {% for D in Counselor_List %}
+                                                    {% if D.id|int == CounselorID |int%}
+                                                    <b>{{D.Sur_Name}} {{D.Other_Names}}</b>
+                                                    {% endif %}
+                                                    {% endfor %}
+                                                    <br>
+                                                    <br>
+                                                </div>
+                                            </div>
+
+                                            <!-- /.box-body -->
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-default pull-left"
+                                                    data-dismiss="modal">Close
+                                            </button>
+                                            <button type="submit" class="btn btn-primary">Yes Assign Counselor</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+
+                        </div>
+                    </div>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+    </div>
+</section>
+<!--- Modal Forms -->
+<div class="modal fade" id="modal-default">
+    <div class="modal-dialog">
+        <!-- /.modal-content -->
+    </div>
+
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+<!-- End of Modal -->
+{% endblock %}

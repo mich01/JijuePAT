@@ -1,0 +1,141 @@
+{% extends "templates/Admintemplate.html" %}
+{% block content %}
+<style>
+#IQScales {
+  width: 100%;
+  height: 400px;
+}
+
+}
+</style>
+<script>
+am4core.ready(function() {
+
+// Themes begin
+am4core.useTheme(am4themes_animated);
+// Themes end
+
+// Create chart instance
+var chart = am4core.create("IQScales", am4charts.XYChart);
+
+// Add data
+chart.data = [{
+  "country": "Min",
+  "visits": {{Min}}
+}, {
+  "country": "Max",
+  "visits": {{Max}}
+}, {
+  "country": "Average",
+  "visits": {{Avg}}
+}];
+
+// Create axes
+
+var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+categoryAxis.dataFields.category = "country";
+categoryAxis.renderer.grid.template.location = 0;
+categoryAxis.renderer.minGridDistance = 30;
+
+categoryAxis.renderer.labels.template.adapter.add("dy", function(dy, target) {
+  if (target.dataItem && target.dataItem.index & 2 == 2) {
+    return dy + 25;
+  }
+  return dy;
+});
+
+var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+
+// Create series
+var series = chart.series.push(new am4charts.ColumnSeries());
+series.dataFields.valueY = "visits";
+series.dataFields.categoryX = "country";
+series.name = "Visits";
+series.columns.template.tooltipText = "{categoryX}: [bold]{valueY}[/]";
+series.columns.template.fillOpacity = .8;
+
+var columnTemplate = series.columns.template;
+columnTemplate.strokeWidth = 2;
+columnTemplate.strokeOpacity = 1;
+
+}); // end am4core.ready()
+</script>
+
+<section class="content-header">
+           <H1>
+               IQ Results
+           </H1>
+    {% with messages = get_flashed_messages() %}
+	  {% if messages %}
+	    {% for message in messages %}
+		  <div class="alert alert-warning alert-dismissible" role="alert">
+		  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+			{{message}}
+		  </div>
+		{% endfor %}
+	  {% endif %}
+	{% endwith %}
+    <ol class="breadcrumb">
+        <li><a href="{{url_for('dashboard')}}"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">IQ Results</li>
+    </ol>
+</section>
+<div class="row">
+    <div class="col-sm-17">
+      <div id="IQScales"></div>
+    </div>
+
+</div>
+<div class="box-body">
+    <table id="Big5Results" class="table table-bordered table-striped table-hover">
+        <thead style="color:white">
+            <tr bgcolor="#605ca8">
+            <th><div class="fa fa-sort"/> Test</th>
+            <th><div class="fa fa-sort"/> Number of Candidates</th>
+            <th><div class="fa fa-sort"/> Max</th>
+            <th><div class="fa fa-sort"/> Min</th>
+            <th><div class="fa fa-sort"/> Average IQ Score</th>
+
+        </tr>
+        </thead>
+         <tbody>
+         <tr bgcolor="#FF0000">
+            <td bgcolor="#00FFFF"><B>Averages</B></td>
+            <td bgcolor="#00FFFF"><B>{{Count}}</B></td>
+            <td bgcolor="#00FFFF"><B>{{Max}}</B></td>
+            <td bgcolor="#00FFFF"><B>{{Min}}</B></td>
+            <td bgcolor="#00FFFF"><B>{{Avg}}</B></td>
+        </tr>
+        {% for v in AverageSummary %}
+        {% for u in v %}
+        <tr>
+            <td>{{u.Name}}</td>
+            <td>{{u.Counts}}</td>
+            <td>{{u.Max_Score}}</td>
+            <td>{{u.Min_Score}}</td>
+            <td>{{u.Avg_Score}}</td>
+         {% endfor %}
+         {% endfor %}
+
+    </table>
+<table id="Big5ResultsClients" class="table table-bordered table-striped table-hover">
+        <thead style="color:white">
+            <tr bgcolor="#605ca8">
+            <th><div class="fa fa-sort"/> ID</th>
+            <th><div class="fa fa-sort"/> Test</th>
+            <th><div class="fa fa-sort"/> Candidate</th>
+            <th><div class="fa fa-sort"/> IQ Score</th>
+        </tr>
+        </thead>
+         <tbody>
+        {% for u in IQ_Summary %}
+        <tr>
+            <td>{{u.TestID}}</td>
+            <td>{{u.Name}}</td>
+            <td>{{u.Sur_Name}} {{u.Other_Names}}</td>
+            <td>{{u.IQ}}</td>
+         {% endfor %}
+    </table>
+
+</div>
+{% endblock %}

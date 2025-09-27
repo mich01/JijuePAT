@@ -1,0 +1,264 @@
+{% extends "templates/Admintemplate.html" %}
+
+{% block content %}
+<style>
+#GenderChart
+{
+  width: 100%;
+  height: 500px;
+}
+</style>
+
+<!-- Chart code -->
+<script>
+am4core.ready(function() {
+
+// Themes begin
+am4core.useTheme(am4themes_animated);
+// Themes end
+
+var chart = am4core.create("GenderChart", am4charts.PieChart3D);
+chart.hiddenState.properties.opacity = 0; // this creates initial fade-in
+
+chart.legend = new am4charts.Legend();
+
+chart.data = [
+  {
+ "Gender": "Male",
+  "population": {{GenderDistribution}}
+  },
+  {
+ "Gender": "Female",
+  "population": 2
+  }
+];
+
+var series = chart.series.push(new am4charts.PieSeries3D());
+series.dataFields.value = "population";
+series.dataFields.category = "Gender";
+
+}); // end am4core.ready()
+
+
+
+</script>
+<section class="content-header">
+           <H1>
+               Search Module
+           </H1>
+    {% with messages = get_flashed_messages() %}
+	  {% if messages %}
+	    {% for message in messages %}
+		  <div class="alert alert-warning alert-dismissible" role="alert">
+		  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+			{{message}}
+		  </div>
+		{% endfor %}
+	  {% endif %}
+	{% endwith %}
+    <ol class="breadcrumb">
+        <li><a href="{{url_for('dashboard')}}"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Search Person Module</li>
+    </ol>
+</section>
+<input type="text" id="text" value="Your package has been recorded.">
+<button type="button" class="btn btn-block btn-primary btn-lg" data-toggle="modal" data-target="#SearchModal">Query
+    System
+</button>
+<div class="modal modal-primary fade" id="SearchModal">
+    <form method="POST" action="{{url_for('Search')}}">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">x</span></button>
+                    <h4 class="modal-title" align="center">Select Test to View Results</h4>
+                    <div class="form-group">
+                        <label>Select</label>
+                        <select class="form-control" id="SearchFilter">
+                            <option selected="selected" id=""></option>
+                            <option id="0">Gender</option>
+                            <option>option 2</option>
+                            <option>option 3</option>
+                            <option>option 4</option>
+                            <option>option 5</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group margin" id="Gender">
+                        <input type="text" name="TXTGender" class="form-control" placeholder="Select Gender">
+                        <span class="input-group-btn" id="GButton">
+                      <button type="button" class="btn btn-info btn-flat" onclick="hidemeGender()">X</button>
+                    </span>
+                    </div>
+                    <div class="input-group margin" id="Age">
+                        <input type="text" name="TXTAge" class="form-control">
+                        <span class="input-group-btn" id="GAge">
+                      <button type="button" class="btn btn-info btn-flat" onclick="hidemeAge()">X</button>
+                    </span>
+                    </div>
+                    <div class="input-group margin" id="Career">
+                        <input type="text" name="TXTCareer" class="form-control">
+                        <span class="input-group-btn" id="GCareer">
+                      <button type="button" class="btn btn-info btn-flat" onclick="hidemeAge()">X</button>
+                    </span>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Search</button>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </form>
+</div>
+<!-- /.modal -->
+<!-- /.row -->
+<div class="row">
+    <div class="col-sm-6">
+        <div>
+        <div id="GenderChart"></div>
+            </div>
+    </div>
+  <div class="col-sm-6">.col-sm-8</div>
+
+<button type="button">Speak!</button>
+</div>
+
+<script type="text/javascript">
+$(document).ready(function(){
+    $('#SearchFilter').on('change', function() {
+      if ( this.value == '0')
+      {
+        $("#Gender").show();
+      }
+      else if ( this.value == '2')
+      {
+        $("#test").show();
+      }
+    });
+});
+function hidemeGender()
+{
+    $("#Gender").hide();
+}
+function hidemeAge()
+{
+    $("#Age").hide();
+}
+
+</script>
+<script>
+
+am4core.ready(function() {
+
+// Themes begin
+am4core.useTheme(am4themes_animated);
+// Themes end
+
+// Create chart instance
+var chart = am4core.create("chartdiv", am4charts.XYChart);
+chart.scrollbarX = new am4core.Scrollbar();
+
+
+// Add data
+chart.data = [
+
+ {
+ "Attribute": "Male",
+  "Score": "{{GenderDistribution}}"
+  }
+
+];
+
+// Create axes
+var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+categoryAxis.dataFields.category = "Attribute";
+categoryAxis.renderer.grid.template.location = 0;
+categoryAxis.renderer.minGridDistance = 30;
+categoryAxis.renderer.labels.template.horizontalCenter = "right";
+categoryAxis.renderer.labels.template.verticalCenter = "middle";
+categoryAxis.renderer.labels.template.rotation = 270;
+categoryAxis.tooltip.disabled = true;
+categoryAxis.renderer.minHeight = 110;
+
+var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+valueAxis.renderer.minWidth = 50;
+
+// Create series
+var series = chart.series.push(new am4charts.ColumnSeries());
+series.sequencedInterpolation = true;
+series.dataFields.valueY = "Score";
+series.dataFields.categoryX = "Attribute";
+series.tooltipText = "[{categoryX}: bold]{valueY}[/]";
+series.columns.template.strokeWidth = 0;
+
+series.tooltip.pointerOrientation = "vertical";
+
+series.columns.template.column.cornerRadiusTopLeft = 10;
+series.columns.template.column.cornerRadiusTopRight = 10;
+series.columns.template.column.fillOpacity = 0.8;
+
+// on hover, make corner radiuses bigger
+var hoverState = series.columns.template.column.states.create("hover");
+hoverState.properties.cornerRadiusTopLeft = 0;
+hoverState.properties.cornerRadiusTopRight = 0;
+hoverState.properties.fillOpacity = 1;
+
+series.columns.template.adapter.add("fill", function(fill, target) {
+  return chart.colors.getIndex(target.dataItem.index);
+});
+
+// Cursor
+chart.cursor = new am4charts.XYCursor();
+
+}); // end am4core.ready()
+</script>
+<script>
+am4core.ready(function() {
+
+// Themes begin
+am4core.useTheme(am4themes_animated);
+// Themes end
+
+var chart = am4core.create("PersonalityPie", am4charts.PieChart3D);
+chart.hiddenState.properties.opacity = 0; // this creates initial fade-in
+
+chart.legend = new am4charts.Legend();
+
+chart.data = [
+
+ {% for u in Summary %}
+ {
+ "Attribute": "Extraversion",
+  "Score": "{{u.Extraversion}}"
+  },
+  {
+ "Attribute": "Neuroticism",
+  "Score": "{{u.Neuroticism}}"
+  },
+  {
+ "Attribute": "Agreeableness",
+  "Score": "{{u.Agreeableness}}"
+  },
+  {
+ "Attribute": "Consientious",
+  "Score": "{{u.Consientious}}"
+  },
+  {
+ "Attribute": "Openess to Experience",
+  "Score": "{{u.Openess_to_Experience}}"
+  },
+ {% endfor %}
+];
+
+var series = chart.series.push(new am4charts.PieSeries3D());
+series.dataFields.value = "Score";
+series.dataFields.category = "Attribute";
+
+}); // end am4core.ready()
+
+
+
+</script>
+{% endblock %}

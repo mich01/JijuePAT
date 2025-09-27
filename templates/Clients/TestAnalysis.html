@@ -1,0 +1,797 @@
+{% extends "templates/client.html" %}
+{% block content %}
+
+<style>
+  #personalityDetail{
+    width: 100%;
+    height: 500px;
+  }
+  #IQScales {
+    width: 100%;
+    height: 400px;
+  }
+  #AnxietyGague {
+    width: 100%;
+    height: 200px;
+  }
+  #PersonalityPie {
+    width: 100%;
+    height: 400px;
+  }
+  #PTSDGauge {
+    width: 100%;
+    height: 200px;
+  }
+  
+  #DepressionGauge {
+    width: 100%;
+    height: 200px;
+  }
+  
+  #AngerGauge {
+    width: 100%;
+    height: 200px;
+  }
+  
+  </style>
+  
+  <script>
+  
+  am4core.ready(function() {
+  
+  // Themes begin
+  am4core.useTheme(am4themes_animated);
+  // Themes end
+  
+  // Create chart instance
+  var chart = am4core.create("personalityDetail", am4charts.XYChart);
+  chart.scrollbarX = new am4core.Scrollbar();
+  
+  
+  // Add data
+  chart.data =[
+  
+   {
+   "Attribute": "Extraversion",
+    "Score": "{{Extraversion}}"
+    },
+    {
+   "Attribute": "Withdrawal",
+    "Score": "{{Withdrawal}}"
+    },
+    {
+   "Attribute": "Volatility",
+    "Score": "{{Volatility}}"
+    },
+    {
+   "Attribute": "Politeness",
+    "Score": "{{Politeness}}"
+    },
+    {
+   "Attribute": "Orderliness",
+    "Score": "{{Orderliness}}"
+    },
+    {
+   "Attribute": "Openness",
+    "Score": "{{Openness}}"
+    },
+    {
+   "Attribute": "Intellect",
+    "Score": "{{Intellect}}"
+    },
+    {
+   "Attribute": "Industriousness",
+    "Score": "{{Industriousness}}"
+    },
+    {
+   "Attribute": "Enthusiasm",
+    "Score": "{{Enthusiasm}}"
+    },
+    {
+   "Attribute": "Assertiveness",
+    "Score": "{{Assertiveness}}"
+    },
+    {
+   "Attribute": "Neuroticism",
+    "Score": "{{Neuroticism}}"
+    },
+    {
+   "Attribute": "Compassion",
+    "Score": "{{Compassion}}"
+    },
+    {
+   "Attribute": "Agreeableness",
+    "Score": "{{Agreeableness}}"
+    },
+    {
+   "Attribute": "Consientious",
+    "Score": "{{Consientious}}"
+    },
+    {
+   "Attribute": "Openess to Experience",
+    "Score": "{{Openess_to_Experience}}"
+    },
+  ];
+  
+  // Create axes
+  var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+  categoryAxis.dataFields.category = "Attribute";
+  categoryAxis.renderer.grid.template.location = 0;
+  categoryAxis.renderer.minGridDistance = 30;
+  categoryAxis.renderer.labels.template.horizontalCenter = "right";
+  categoryAxis.renderer.labels.template.verticalCenter = "middle";
+  categoryAxis.renderer.labels.template.rotation = 270;
+  categoryAxis.tooltip.disabled = true;
+  categoryAxis.renderer.minHeight = 110;
+  
+  var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+  valueAxis.renderer.minWidth = 50;
+  
+  // Create series
+  var series = chart.series.push(new am4charts.ColumnSeries());
+  series.sequencedInterpolation = true;
+  series.dataFields.valueY = "Score";
+  series.dataFields.categoryX = "Attribute";
+  series.tooltipText = "[{categoryX}: bold]{valueY}[/]";
+  series.columns.template.strokeWidth = 0;
+  
+  series.tooltip.pointerOrientation = "vertical";
+  
+  series.columns.template.column.cornerRadiusTopLeft = 10;
+  series.columns.template.column.cornerRadiusTopRight = 10;
+  series.columns.template.column.fillOpacity = 0.8;
+  
+  // on hover, make corner radiuses bigger
+  var hoverState = series.columns.template.column.states.create("hover");
+  hoverState.properties.cornerRadiusTopLeft = 0;
+  hoverState.properties.cornerRadiusTopRight = 0;
+  hoverState.properties.fillOpacity = 1;
+  
+  series.columns.template.adapter.add("fill", function(fill, target) {
+    return chart.colors.getIndex(target.dataItem.index);
+  });
+  
+  // Cursor
+  chart.cursor = new am4charts.XYCursor();
+  
+  }); // end am4core.ready()
+  
+  </script>
+  <script>
+         $(function() 
+         {
+  
+    var rawData = {{AvgPTSD}},
+      data = getData(rawData);
+  
+    function getData(rawData) {
+      var data = [],
+        start = Math.round(Math.floor(rawData / 10) * 10);
+      data.push(rawData);
+      for (i = start; i > 0; i -= 10) {
+        data.push({
+          y: i
+        });
+      }
+      return data;
+    }
+  
+    Highcharts.chart('PTSDGauge', {
+      chart: {
+        type: 'solidgauge',
+        marginTop: 2
+      },
+  
+      title: {
+        text: '',
+      },
+  
+      subtitle: {
+        text: rawData,
+        style: {
+          'font-size': '60px'
+        },
+        y: 100,
+        zIndex: 7
+      },
+  
+      tooltip: {
+        enabled: false
+      },
+  
+      pane: [{
+        startAngle: -120,
+        endAngle: 120,
+        background: [{ // Track for Move
+          outerRadius: '100%',
+          innerRadius: '80%',
+          backgroundColor: Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0.3).get(),
+          borderWidth: 0,
+          shape: 'arc'
+        }],
+        size: '120%',
+        center: ['50%', '65%']
+      }, {
+        startAngle: -120,
+        endAngle: 120,
+        size: '95%',
+        center: ['50%', '65%'],
+        background: []
+      }],
+  
+      yAxis: [{
+        min: 0,
+        max: 100,
+        lineWidth: 2,
+        lineColor: 'white',
+        tickInterval: 10,
+        labels: {
+          enabled: false
+        },
+        minorTickWidth: 0,
+        tickLength: 50,
+        tickWidth: 5,
+        tickColor: 'white',
+        zIndex: 6,
+        stops: [
+          [0, '#fff'],
+          [0.101, '#0f0'],
+          [0.201, '#2d0'],
+          [0.301, '#4b0'],
+          [0.401, '#690'],
+          [0.501, '#870'],
+          [0.601, '#a50'],
+          [0.701, '#c30'],
+          [0.801, '#e10'],
+          [0.901, '#f03'],
+          [1, '#f06']
+        ]
+      }, {
+        linkedTo: 0,
+        pane: 1,
+        lineWidth: 5,
+        lineColor: 'white',
+        tickPositions: [],
+        zIndex: 6
+      }],
+  
+      series: [{
+        animation: false,
+        dataLabels: {
+          enabled: false
+        },
+        borderWidth: 0,
+        color: Highcharts.getOptions().colors[0],
+        radius: '100%',
+        innerRadius: '80%',
+        data: data
+      }]
+    });
+  });
+  
+  
+  </script>
+  <script>
+         $(function() {
+  
+    var rawData = {{AvgAnxiety}},
+      data = getData(rawData);
+  
+    function getData(rawData) {
+      var data = [],
+        start = Math.round(Math.floor(rawData / 10) * 10);
+      data.push(rawData);
+      for (i = start; i > 0; i -= 10) {
+        data.push({
+          y: i
+        });
+      }
+      return data;
+    }
+  
+    Highcharts.chart('AnxietyGague', {
+      chart: {
+        type: 'solidgauge',
+        marginTop: 10
+      },
+  
+      title: {
+        text: ''
+      },
+  
+       subtitle: {
+        text: rawData,
+        style: {
+          'font-size': '60px'
+        },
+        y: 100,
+        zIndex: 7
+      },
+  
+      tooltip: {
+        enabled: false
+      },
+  
+      pane: [{
+        startAngle: -120,
+        endAngle: 120,
+        background: [{ // Track for Move
+          outerRadius: '100%',
+          innerRadius: '80%',
+          backgroundColor: Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0.3).get(),
+          borderWidth: 0,
+          shape: 'arc'
+        }],
+        size: '120%',
+        center: ['50%', '65%']
+      }, {
+        startAngle: -120,
+        endAngle: 120,
+        size: '95%',
+        center: ['50%', '65%'],
+        background: []
+      }],
+  
+      yAxis: [{
+        min: 0,
+        max: 100,
+        lineWidth: 2,
+        lineColor: 'white',
+        tickInterval: 10,
+        labels: {
+          enabled: false
+        },
+        minorTickWidth: 0,
+        tickLength: 50,
+        tickWidth: 5,
+        tickColor: 'white',
+        zIndex: 6,
+        stops: [
+          [0, '#fff'],
+          [0.101, '#0f0'],
+          [0.201, '#2d0'],
+          [0.301, '#4b0'],
+          [0.401, '#690'],
+          [0.501, '#870'],
+          [0.601, '#a50'],
+          [0.701, '#c30'],
+          [0.801, '#e10'],
+          [0.901, '#f03'],
+          [1, '#f06']
+        ]
+      }, {
+        linkedTo: 0,
+        pane: 1,
+        lineWidth: 5,
+        lineColor: 'white',
+        tickPositions: [],
+        zIndex: 6
+      }],
+  
+      series: [{
+        animation: false,
+        dataLabels: {
+          enabled: false
+        },
+        borderWidth: 0,
+        color: Highcharts.getOptions().colors[0],
+        radius: '100%',
+        innerRadius: '80%',
+        data: data
+      }]
+    });
+  });
+  
+  
+  </script>
+  
+  <script>
+         $(function() {
+  
+    var rawData = {{AvgDepression}},
+      data = getData(rawData);
+  
+    function getData(rawData) {
+      var data = [],
+        start = Math.round(Math.floor(rawData / 10) * 10);
+      data.push(rawData);
+      for (i = start; i > 0; i -= 10) {
+        data.push({
+          y: i
+        });
+      }
+      return data;
+    }
+  
+    Highcharts.chart('DepressionGauge', {
+      chart: {
+        type: 'solidgauge',
+        marginTop: 10
+      },
+  
+      title: {
+        text: ''
+      },
+  
+     subtitle: {
+        text: rawData,
+        style: {
+          'font-size': '60px'
+        },
+        y: 100,
+        zIndex: 7
+      },
+  
+      tooltip: {
+        enabled: false
+      },
+  
+      pane: [{
+        startAngle: -120,
+        endAngle: 120,
+        background: [{ // Track for Move
+          outerRadius: '100%',
+          innerRadius: '80%',
+          backgroundColor: Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0.3).get(),
+          borderWidth: 0,
+          shape: 'arc'
+        }],
+        size: '120%',
+        center: ['50%', '65%']
+      }, {
+        startAngle: -120,
+        endAngle: 120,
+        size: '95%',
+        center: ['50%', '65%'],
+        background: []
+      }],
+  
+      yAxis: [{
+        min: 0,
+        max: 100,
+        lineWidth: 2,
+        lineColor: 'white',
+        tickInterval: 10,
+        labels: {
+          enabled: false
+        },
+        minorTickWidth: 0,
+        tickLength: 50,
+        tickWidth: 5,
+        tickColor: 'white',
+        zIndex: 6,
+        stops: [
+          [0, '#fff'],
+          [0.101, '#0f0'],
+          [0.201, '#2d0'],
+          [0.301, '#4b0'],
+          [0.401, '#690'],
+          [0.501, '#870'],
+          [0.601, '#a50'],
+          [0.701, '#c30'],
+          [0.801, '#e10'],
+          [0.901, '#f03'],
+          [1, '#f06']
+        ]
+      }, {
+        linkedTo: 0,
+        pane: 1,
+        lineWidth: 5,
+        lineColor: 'white',
+        tickPositions: [],
+        zIndex: 6
+      }],
+  
+      series: [{
+        animation: false,
+        dataLabels: {
+          enabled: false
+        },
+        borderWidth: 0,
+        color: Highcharts.getOptions().colors[0],
+        radius: '100%',
+        innerRadius: '80%',
+        data: data
+      }]
+    });
+  });
+  
+  
+  </script>
+  <script>
+         $(function() {
+  
+    var rawData = {{AvgAngetMmanagement}},
+      data = getData(rawData);
+  
+    function getData(rawData) {
+      var data = [],
+        start = Math.round(Math.floor(rawData / 10) * 10);
+      data.push(rawData);
+      for (i = start; i > 0; i -= 10) {
+        data.push({
+          y: i
+        });
+      }
+      return data;
+    }
+  
+    Highcharts.chart('AngerGauge', {
+      chart: {
+        type: 'solidgauge',
+        marginTop: 10
+      },
+  
+      title: {
+        text: ''
+      },
+  
+     subtitle: {
+        text: rawData,
+        style: {
+          'font-size': '60px'
+        },
+        y: 100,
+        zIndex: 7
+      },
+  
+      tooltip: {
+        enabled: false
+      },
+  
+      pane: [{
+        startAngle: -120,
+        endAngle: 120,
+        background: [{ // Track for Move
+          outerRadius: '100%',
+          innerRadius: '80%',
+          backgroundColor: Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0.3).get(),
+          borderWidth: 0,
+          shape: 'arc'
+        }],
+        size: '120%',
+        center: ['50%', '65%']
+      }, {
+        startAngle: -120,
+        endAngle: 120,
+        size: '95%',
+        center: ['50%', '65%'],
+        background: []
+      }],
+  
+      yAxis: [{
+        min: 0,
+        max: 100,
+        lineWidth: 2,
+        lineColor: 'white',
+        tickInterval: 10,
+        labels: {
+          enabled: false
+        },
+        minorTickWidth: 0,
+        tickLength: 50,
+        tickWidth: 5,
+        tickColor: 'white',
+        zIndex: 6,
+        stops: [
+          [0, '#fff'],
+          [0.101, '#0f0'],
+          [0.201, '#2d0'],
+          [0.301, '#4b0'],
+          [0.401, '#690'],
+          [0.501, '#870'],
+          [0.601, '#a50'],
+          [0.701, '#c30'],
+          [0.801, '#e10'],
+          [0.901, '#f03'],
+          [1, '#f06']
+        ]
+      }, {
+        linkedTo: 0,
+        pane: 1,
+        lineWidth: 5,
+        lineColor: 'white',
+        tickPositions: [],
+        zIndex: 6
+      }],
+  
+      series: [{
+        animation: false,
+        dataLabels: {
+          enabled: false
+        },
+        borderWidth: 0,
+        color: Highcharts.getOptions().colors[0],
+        radius: '100%',
+        innerRadius: '80%',
+        data: data
+      }]
+    });
+  });
+  
+  
+  </script>
+  <script>
+  am4core.ready(function() {
+  
+  // Themes begin
+  am4core.useTheme(am4themes_animated);
+  // Themes end
+  
+  var chart = am4core.create("PersonalityPie", am4charts.PieChart3D);
+  chart.hiddenState.properties.opacity = 0; // this creates initial fade-in
+  
+  chart.legend = new am4charts.Legend();
+  chart.data =[
+  
+   {
+   "Attribute": "Extraversion",
+    "Score": "{{Extraversion}}"
+    },
+    {
+   "Attribute": "Withdrawal",
+    "Score": "{{Withdrawal}}"
+    },
+    {
+   "Attribute": "Volatility",
+    "Score": "{{Volatility}}"
+    },
+    {
+   "Attribute": "Politeness",
+    "Score": "{{Politeness}}"
+    },
+    {
+   "Attribute": "Orderliness",
+    "Score": "{{Orderliness}}"
+    },
+    {
+   "Attribute": "Openness",
+    "Score": "{{Openness}}"
+    },
+    {
+   "Attribute": "Intellect",
+    "Score": "{{Intellect}}"
+    },
+    {
+   "Attribute": "Industriousness",
+    "Score": "{{Industriousness}}"
+    },
+    {
+   "Attribute": "Enthusiasm",
+    "Score": "{{Enthusiasm}}"
+    },
+    {
+   "Attribute": "Assertiveness",
+    "Score": "{{Assertiveness}}"
+    },
+    {
+   "Attribute": "Neuroticism",
+    "Score": "{{Neuroticism}}"
+    },
+    {
+   "Attribute": "Compassion",
+    "Score": "{{Compassion}}"
+    },
+    {
+   "Attribute": "Agreeableness",
+    "Score": "{{Agreeableness}}"
+    },
+    {
+   "Attribute": "Consientious",
+    "Score": "{{Consientious}}"
+    },
+    {
+   "Attribute": "Openess to Experience",
+    "Score": "{{Openess_to_Experience}}"
+    },
+  ];
+  
+  var series = chart.series.push(new am4charts.PieSeries3D());
+  series.dataFields.value = "Score";
+  series.dataFields.category = "Attribute";
+  
+  }); // end am4core.ready()
+  
+  
+  
+  
+  
+  </script>
+
+
+  <div class="container">
+        <section class="content-header">
+<div class="form-row">
+        <header class="rad-page-title">
+            <div class="row breadcrumbs-row" style="float: right;">
+                <ul class="breadcrumbs">
+                    <li><a href="{{url_for('Home')}}"> Home | &nbsp; </a></li>
+                    <li> My Tests Results</li>
+                </ul>
+            </div>
+        </header>
+        <hr>
+    </div>
+      <h1>
+          Your Test Results
+      </h1>
+  </section>
+      <div class="row" style="align-self: center;">
+          <div class="col-xs-12 col-sm-6 col-md-6" style="align-self: center;">
+            <H2 style="align-self: center;">IQ Score: <b>{{AvgIQ}}</b></H2>
+          </div>
+      </div>
+    </div>
+  <div class="row" style="align-self: center;">
+      <div class="col-sm-2 col-md-6 col-lg-12" >
+          <div id="personalityDetail"></div>
+      </div>
+  </div>
+  <div class="row" style="align-self: center;">
+      <div class="col">
+          <div id="PersonalityPie"></div>
+      </div>
+  </div>
+<div class="container">
+<div class="row" >
+      <div class="col" style="align-self: center;">
+        <div align="center"><h3>Depression Score</h3></div>
+          <div id="PTSDGauge"></div>
+      </div>
+      <div class="col" style="align-self: center;">
+        <div align="center"><h3>Anger Management Score</h3></div>
+        <div id="AnxietyGague"></div>
+      </div>
+    </div>
+</div>
+<div class="container">
+    <div class="row" >
+    </div>
+    <div class="row" >
+      <div class="col" style="align-self: center;">
+        <div align="center"><h3>Depression Score</h3></div>
+          <div id="DepressionGauge"></div>
+      </div>
+      <div class="col" style="align-self: center;">
+        <div align="center"><h3>Anger Management Score</h3></div>
+        <div id="AngerGauge"></div>
+      </div>
+    </div>
+  </div>
+  <div class="box-body">
+  
+      <table id="Big5Results" class="table table-bordered table-striped table-hover">
+          <thead style="color:white">
+          <tr bgcolor="#605ca8">
+              <th>
+                  <div class="fa fa-sort"/>
+                  Test
+              </th>
+              <th>
+                  <div class="fa fa-sort"/>
+                  Type
+              </th>
+              <th>
+                  <div class="fa fa-sort"/>
+                  Testing Status
+              </th>
+          </tr>
+          </thead>
+          <tbody>
+          {% for u in UserPersonality %}
+          <tr>
+              <td>{{u.Name}} {{u.ID}}</td>
+              <td>{{u.TestType}}</td>
+              <td
+                      {% if u.TestStatus=="Completed" %}
+                      bgcolor="Lime"
+                      {% else %}
+                      bgcolor="Yellow"
+                      {% endif %}
+              >{{u.TestStatus}}
+              </td>
+              {% endfor %}
+      </table>  
+  </div>
+
+{% endblock %}

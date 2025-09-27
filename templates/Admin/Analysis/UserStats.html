@@ -1,0 +1,54 @@
+{% extends "templates/Admintemplate.html" %}
+{% block content %}
+       <section class="content-header">
+           <H1>
+               User's Tests Module
+           </H1>
+    {% with messages = get_flashed_messages() %}
+	  {% if messages %}
+	    {% for message in messages %}
+		  <div class="alert alert-warning alert-dismissible" role="alert">
+		  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+			{{message}}
+		  </div>
+		{% endfor %}
+	  {% endif %}
+	{% endwith %}
+    <ol class="breadcrumb">
+        <li><a href="{{url_for('dashboard')}}"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">User's Tests</li>
+    </ol>
+</section>
+<div class="box-body">
+    <table id="MyTable" class="table table-bordered table-striped table-hover">
+        <thead style="color:white"><b>
+            <tr bgcolor="#605ca8">
+            <th><div class="fa fa-sort"/> ID</th>
+            <th><div class="fa fa-sort"/> Test</th>
+            <th><div class="fa fa-sort"/> Candidate</th>
+            <th><div class="fa fa-sort"/> Email</th>
+            <th><div class="fa fa-sort"/> Started</th>
+            <th><div class="fa fa-sort"/> Completed</th>
+            <th><div class="fa fa-sort"/> TestStatus</th>
+            </tr></b>
+        </thead>
+         <tbody>
+        {% for u in Summary %}
+        <tr>
+            <td>{{u.UID}}</td>
+            <td>{{u.Name}}</td>
+            <td>{{u.Sur_Name}} {{u.Other_Names}}</td>
+            <td>{{u.EmailAddress}}</td>
+            <td>{{u.DateStarted}}</td>
+            <td>{{u.DateCompleted}}</td>
+            <td
+             {% if u.TestStatus=="Completed" %}
+             bgcolor="Lime"
+             {% else %}
+             bgcolor="Yellow"
+            {% endif %}
+            >{{u.TestStatus}}</td>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}

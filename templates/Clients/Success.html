@@ -1,0 +1,9 @@
+{% extends "templates/login.html" %}
+{% block content %}
+		<div class="wrapper" style="width=100%">
+			<div class="inner">
+				<h1 align="center"><div id="ErrorMsg"/>{{ErrorMsg}}</h1>
+				<h2 align="center">OR Login <a href="{{url_for('UserLogin')}}">Here</a></h2>
+			</div>
+		</div>
+{% endblock %}

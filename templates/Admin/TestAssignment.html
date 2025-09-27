@@ -1,0 +1,196 @@
+{% extends "templates/Admintemplate.html" %}
+{% block content %}
+       <section class="content-header">
+           <H1>
+               Test Assignment Module
+           </H1>
+    {% with messages = get_flashed_messages() %}
+	  {% if messages %}
+	    {% for message in messages %}
+		  <div class="alert alert-warning alert-dismissible" role="alert">
+		  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+			{{message}}
+		  </div>
+		{% endfor %}
+	  {% endif %}
+	{% endwith %}
+    <ol class="breadcrumb">
+        <li><a href="{{url_for('dashboard')}}"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Test Assignment</li>
+    </ol>
+</section>
+<div align="center">
+    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#Search">
+        Search
+    </button>
+</div>
+<div class="box-body">
+    <table id="levelInstitution" class="table table-bordered table-striped table-hover">
+        <thead style="color:white">
+        <tr bgcolor="#605ca8">
+            <th>
+                <div class="fa fa-sort"/>
+                ID
+            </th>
+            <th>
+                <div class="fa fa-sort"/>
+                User Full Names
+            </th>
+            <th>
+                <div class="fa fa-sort"/>
+                user Email
+            </th>
+            <th>
+                <div class="fa fa-sort"/>
+                Status
+            </th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for u in User_List %}
+        <tr>
+            <td>{{u.id}}</td>
+            <td data-toggle="modal" data-target="#ViewTests{{u.id }}">{{u.Sur_Name}} {{u.Other_Names}}
+            </td>
+            <td>{{u.EmailAddress}}</td>
+            <td>{{u.Status_type}}</td>
+            <td data-toggle="modal" data-target="#AssigntTest{{u.id }}">
+                                <i class="fa fa fa-plus-square"></i> Assign Tests
+            </td>
+            <!--- New Institution Level -->
+            <div id="AssigntTest{{u.id}}" class="modal fade" role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <form method="post" action="{{url_for('AsignTests')}}">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span></button>
+                                    <h4 class="modal-title">Assign Tests</h4>
+                                </div>
+                                <div class="modal-body">
+                                     <input type="hidden" name="UID" value="{{u.id}}"/>
+                                    <div class="box-body">
+                                        <div class="col-sm-10">
+                                                {% for T in Tests_Lists%}
+                                                 <li>
+                                                     &nbsp; {{T.ID}}. <input type="checkbox" name="TestSelected" value="{{T.ID}}"> <b>{{T.Name}}: </b> ( {{T.TestType}} )
+                                                </li>
+                                            <hr>
+                                                {% endfor %}
+
+                                            <br>
+                                            <br>
+                                        </div>
+                                    </div>
+                                    <input type="hidden" value="{{u.ID}}" name="ID"/>
+                                    <!-- /.box-body -->
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close
+                                    </button>
+                                    <button type="submit" class="btn btn-primary">Assign Selected Tests</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+            <div id="ViewTests{{u.id}}" class="modal fade" size="auto">
+                <div class="modal-dialog">
+
+                    <div class="modal-content">
+                        <div class="Modal-header">
+                            <h4 class="modal-title" align="center">Select Questions</h4>
+                            <hr size="2">
+                        </div>
+                        <form action="{{url_for('UnAsignTests')}}" method="post">
+                            <div class="height: 1px; overflow-y: scroll;">
+                                {%for Q in Assigned_Tests_Lists %}
+                                {% if u.id ==Q.UserID %}
+                                <li>
+                                    &nbsp; {{Q.UID}} <input type="checkbox" name="TestSelected" value="{{Q.UID}}">
+                                    {{Q.Name}}: </b> {{Q.Description}}
+                                    <hr>
+                                </li>
+                                {% endif %}
+
+                                {% endfor %}
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close
+                                </button>
+                                <button type="submit" class="btn btn-primary">Remove Selected Questions</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    </div>
+    <div class="modal fade" id="Search">
+        <div class="modal-dialog">
+            <form method="post" action="{{url_for('TestsModule')}}">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">Search Tests</h4>
+                    </div>
+                    <div class="modal-body">
+
+                        <div class="box-body">
+                            <label class="col-sm-2 control-label">Test Name</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" name="Name">
+                                <br>
+                            </div>
+                            <br>
+                            <label class="col-sm-2 control-label">Author</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" name="Creator">
+                                <br>
+                            </div>
+                            <br>
+                            <label class="col-sm-2 control-label">Set Status</label>
+                            <div class="col-sm-10">
+                                <select name="Status" class="form-control select2">
+                                    <option selected="selected" value=""></option>
+                                    <option value="Open">Open</option>
+                                    <option value="Closed">Closed</option>
+                                </select>
+                                <br>
+                                <br>
+                            </div>
+                            <br>
+                            <label class="col-sm-2 control-label">Description</label>
+                            <div class="col-sm-10">
+                                <textarea class="form-control" name="Description" rows="3"
+                                          placeholder="Enter ..."></textarea>
+                                <br>
+                            </div>
+                            <br>
+                            <br>
+                        </div>
+                        <!-- /.box-body -->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Search</button>
+                    </div>
+                </div>
+            </form>
+            <!-- /.modal-content -->
+        </div>
+
+        <!-- /.modal-dialog -->
+    </div>
+
+</div>
+{% endblock %}

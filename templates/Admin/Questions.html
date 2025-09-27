@@ -1,0 +1,358 @@
+{% extends "templates/Admintemplate.html" %}
+{% block content %}
+<!-- Content Header (Page header) -->
+       <section class="content-header">
+           <H1>
+               Questions Module
+           </H1>
+    {% with messages = get_flashed_messages() %}
+	  {% if messages %}
+	    {% for message in messages %}
+		  <div class="alert alert-warning alert-dismissible" role="alert">
+		  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+			{{message}}
+		  </div>
+		{% endfor %}
+	  {% endif %}
+	{% endwith %}
+    <ol class="breadcrumb">
+        <li><a href="{{url_for('dashboard')}}"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Questions</li>
+    </ol>
+</section>
+<section class="content">
+    <div align="center">
+        <button type="button" class="btn btn-default" data-toggle="modal" data-target="#addQuestionModal">
+            Add Question
+        </button>
+    </div>
+    <!-- /.box-header -->
+    <div class="box-body">
+        <table id="levelInstitution" class="table table-bordered table-striped">
+            <thead style="color:white">
+            <tr bgcolor="#605ca8">
+                <th><div class="fa fa-sort"/> ID</th>
+                <th><div class="fa fa-sort"/> Question</th>
+                <th><div class="fa fa-sort"/> Media Type</th>
+                <th><div class="fa fa-sort"/> Media Source</th>
+                <th><div class="fa fa-sort"/> Model ID</th>
+                <th><div class="fa fa-sort"/> Answer Choices</th>
+                <th><div class="fa fa-sort"/> Description</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for u in QuestionList %}
+            <tr>
+                <td>{{u.ID}}</td>
+                <td data-toggle="modal" data-target="#UnMappAnswers{{u.ID}}">{{u.Question}}</td>
+                <td>{{u.MediaType}}</td>
+                <td>{{u.MediaSoure}}</td>
+                <td>{{u.ModelID}}</td>
+                <td>
+                    {% for Q in AnswerList %}
+                    {% if Q.QuestionID == u.ID %}
+                    <Li>{{Q.AnswerDesc}}</Li>
+                    {% endif %}
+                    {% endfor %}
+                </td>
+                <td>{{u.Description}}</td>
+                <td>
+                    <!-- Tasks: style can be found in dropdown.less -->
+                    <l class="dropdown tasks-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="fa fa-fw fa-gear"></i>
+                        </a>
+                        <ul class="dropdown-menu pull-right">
+                            <li data-toggle="modal" data-target="#EditQuestion{{u.ID }}" data-id="{{u.id}}"><i
+                                    class="fa fa-fw fa-edit"></i>Edit
+                            </li>
+                            <li data-toggle="modal" data-target="#MappAnswers{{u.ID }}" data-id="{{u.id}}"><i
+                                    class="fa fa-fw fa-edit"></i>Set Options
+                            </li>
+                            <li data-toggle="modal" data-target="#Delete{{u.ID }}" data-id="{{u.LevelID}}"><i
+                                    class="fa fa-fw fa-trash"></i> Delete
+                            </li>
+                        </ul>
+                    </l>
+                </td>
+                <div id="UnMappAnswers{{u.ID}}" class="modal fade" size="auto">
+                <div class="modal-dialog">
+
+                    <div class="modal-content" >
+                        <div class="Modal-header">
+                            <h4 class="modal-title" align="center">Select Answer Choice</h4>
+                            <hr size="20">
+                    </div>
+                        <form action="{{url_for('UnMapAnswers')}}" method="post">
+                            <div style="height: 200px; overflow-y: scroll;" >
+                            {%for A in AnswerList%}
+                                {% if A.QuestionID == u.ID %}
+                            <li>
+                                &nbsp; {{A.UID}}. <input type="checkbox" name="AnswerSelected" value="{{A.UID}}"> {{A.AnswerDesc}}
+                            </li>
+                                {% endif%}
+                            {% endfor %}
+                            </div>
+                            <div class="modal-footer">
+                            <input type="hidden" value="{{u.UID}}" name="MID">
+                        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Remove Answers</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+                <div id="MappAnswers{{u.ID}}" class="modal fade" size="auto">
+                <div class="modal-dialog">
+
+                    <div class="modal-content" >
+                        <div class="Modal-header">
+                            <h4 class="modal-title" align="center">Select Answer Choice</h4>
+                            <hr size="20">
+                    </div>
+                        <form action="{{url_for('MapAnswers')}}" method="post">
+                            <div style="height: 200px; overflow-y: scroll;" >
+                            {%for A in All_Answers%}
+                            <li>
+                                &nbsp; {{A.AnswerID}}. <input type="checkbox" name="AnswerSelected" value="{{A.AnswerID}}"> {{A.AnswerDesc}}
+                            </li>
+                            <hr>
+                            {% endfor %}
+                            </div>
+                            <div class="modal-footer">
+                            <input type="hidden" value="{{u.ID}}" name="QID">
+                        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Add Answers</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+                <!--- New Institution Level -->
+                <div id="EditQuestion{{u.ID}}" class="modal fade" role="dialog">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <form method="post" action="{{url_for('editQuestions')}}">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span></button>
+                                        <h4 class="modal-title">Edit Question</h4>
+                                    </div>
+                                    <div class="modal-body">
+
+                                        <div class="box-body">
+                                            <label class="col-sm-2 control-label">Question</label>
+                                            <div class="col-sm-10">
+                                                <textarea class="form-control" name="Question"
+                                                          rows="3" maxlength="500" required>{{u.Question}}</textarea>
+                                                <br>
+                                            </div>
+                                            <br>
+                                            <label class="col-sm-2 control-label">Select Type</label>
+                                            <div class="col-sm-10">
+                                                <select name="MediaType" class="form-control select2" required>
+                                                    <option selected="selected" value="{{u.MediaType}}">
+                                                        {{u.MediaType}}
+                                                    </option>
+                                                    <option value="Text">Text</option>
+                                                    <option value="Image">Image</option>
+                                                    <option value="Audio">Audio</option>
+                                                    <option value="Video">Video</option>
+                                                </select>
+                                                <br>
+                                                <br>
+                                            </div>
+                                            <label class="col-sm-2 control-label">Link</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" class="form-control" name="MediaLink"
+                                                       value="{{u.MediaSoure}}">
+                                                <br>
+                                            </div>
+                                            <br>
+                                            <label class="col-sm-2 control-label">Describe Question</label>
+                                            <div class="col-sm-10">
+                                            <textarea class="form-control" name="Description" rows="3"
+                                                      placeholder="Enter ..." maxlength="500" required>{{u.Description}}</textarea>
+                                                <br>
+                                            </div>
+                                            <br>
+                                            <br>
+
+                                            <label class="col-sm-2 control-label">Select Assesment Model</label>
+                                            <br>
+                                            <br>
+                                            <div class="col-sm-10">
+                                                <select name="Model" class="form-control select2" required>
+                                                    <option selected="selected" value="{{u.ModelID}}">
+                                                        {{u.ModelID}}
+                                                    </option>
+                                                    <option value="Agreeableness">Agreeableness</option>
+                                                    <option value="Compassion">Compassion</option>
+                                                    <option value="Consientious">Consientious</option>
+                                                    <option value="Orderliness">Orderliness</option>
+                                                    <option value="Extraversion">Extraversion</option>
+                                                    <option value="Enthusiasm">Enthusiasm</option>
+                                                    <option value="Industriousness">Industriousness</option>
+                                                    <option value="Politeness">Politeness</option>
+                                                    <option value="Assertiveness">Assertiveness</option>
+                                                    <option value="Neuroticism">Neuroticism</option>
+                                                    <option value="Withdrawal">Withdrawal</option>
+                                                    <option value="Openness_to_Experience">Openness to Experience
+                                                    </option>
+                                                    <option value="Intellect">Intellect</option>
+                                                    <option value="Volatility">Volatility</option>
+                                                    <option value="Anger">Anger</option>
+                                                    <option value="Depression">Depression</option>
+                                                    <option value="Openness">Openness</option>
+                                                    <option value="PTSD">PTSD</option>
+                                                    <option value="Anxiety">Anxiety</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <!-- /.box-body -->
+                                        <input type="hidden" name="QuestionID" value="{{u.ID}}">
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">
+                                            Close
+                                        </button>
+                                        <button type="submit" class="btn btn-primary">Update</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                    </div>
+                </div>
+                <!-- End of Modal --->
+                <div id="Delete{{u.ID}}" class="modal fade" role="dialog">
+                    <div class="modal-dialog">
+
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                <h4 class="modal-title">
+                                    Are you Sure you want to delete the below Question?
+                                </h4>
+                            </div>
+                            <div class="modal-body">
+                                {{u.Question}}
+                            </div>
+                            <form method="POST" action="{{url_for('DeleteQuestion')}}">
+                                <div class="modal-footer">
+                                    <input type="hidden" name="QuestionID" value="{{u.ID}}">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel
+                                    </button>
+                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                </div>
+                            </form>
+                        </div>
+
+                    </div>
+                </div>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+</div>
+<dvi class="modal fade" id="addQuestionModal">
+    <div class="modal-dialog">
+        <form method="post" action="{{url_for('addQuestions')}}">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Add Question</h4>
+                </div>
+                <div class="modal-body">
+
+                    <div class="box-body">
+                        <label class="col-sm-2 control-label">Question</label>
+                        <div class="col-sm-10">
+                                <textarea class="form-control" name="Question" rows="3"
+                                          placeholder="Enter ..."maxlength="500" required ></textarea>
+                            <br>
+                        </div>
+                        <br>
+                        <label class="col-sm-2 control-label">Type</label>
+                        <div class="col-sm-10">
+                            <select id="MediaType" name="MediaType" class="form-control select2" onchange="typeSelected()" required>
+
+                                <option value="">Select Type</option>
+                                <option value="Text">Text</option>
+                                <option value="Image">Image</option>
+                                <option value="Audio">Audio</option>
+                                <option value="Video">Video</option>
+                            </select>
+                            <br>
+                            <br>
+                        </div>
+                        <br>
+                        <br>
+                        <hr color="black" width="20px">
+                        <div id="fileUploader" style="visible:hidden">
+                            <label for="exampleInputFile">Select Image File</label>
+                            <input align="center" type="file" id="exampleInputFile">
+                            </div>
+                        <br>
+                        <label class="col-sm-2 control-label">Link</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" name="MediaLink">
+                            <br>
+                        </div>
+                        <br>
+                        <label class="col-sm-2 control-label">Describe Question</label>
+                        <div class="col-sm-10">
+                                <textarea class="form-control" name="Description" rows="3"
+                                          placeholder="Enter ..." maxlength="500" required ></textarea>
+                            <br>
+                        </div>
+                        <br>
+                        <label class="col-sm-2 control-label">Select Assesment Model</label>
+                        <br>
+                        <div class="col-sm-10">
+                            <select name="Model" class="form-control select2" required>
+                                <option value="">Select Attribute</option>
+                                <option value="Agreeableness">Agreeableness</option>
+                                <option value="Compassion">Compassion</option>
+                                <option value="Consientious">Consientious</option>
+                                <option value="Orderliness">Orderliness</option>
+                                <option value="Extraversion">Extraversion</option>
+                                <option value="Enthusiasm">Enthusiasm</option>
+                                <option value="Industriousness">Industriousness</option>
+                                <option value="Politeness">Politeness</option>
+                                <option value="Assertiveness">Assertiveness</option>
+                                <option value="Neuroticism">Neuroticism</option>
+                                <option value="Withdrawal">Withdrawal</option>
+                                <option value="Openness_to_Experience">Openness to Experience</option>
+                                <option value="Intellect">Intellect</option>
+                                <option value="Volatility">Volatility</option>
+                                <option value="Anger">Anger</option>
+                                <option value="PTSD">PTSD</option>
+                                <option value="Depression">Depression</option>
+                                <option value="Openness">Openness</option>
+                                <option value="Anxiety">Anxiety</option>
+                            </select>
+
+                        </div>
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Add Question</button>
+                </div>
+            </div>
+        </form>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</dvi>
+<script>
+
+</script>
+{% endblock %}

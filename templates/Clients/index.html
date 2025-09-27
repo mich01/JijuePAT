@@ -1,0 +1,30 @@
+{% extends "templates/login.html" %}
+
+{% block content %}
+    <div class="inner">
+        <div class="image-holder">
+            <img src="{{url_for('static', filename='img/logo.png')}}" alt="">
+        </div>
+        <form action="{{url_for('UserLogin')}}" method="POST">
+            <h4 align="center">Sign Up</h4>
+            <p align="center">Don't have an account? <a href="{{url_for('RegisterUser')}}">Sign Up
+            </a></p>
+        <div class="form-wrapper">
+                <h4 align="center">
+                    {{ErrorMsg}}
+                </h4>
+                <input name="UserName" type="text" placeholder="Username" class="form-control" maxlength="20" required>
+                <i class="zmdi zmdi-account"></i>
+            </div>
+        <div class="form-wrapper">
+
+                <input id="PassWord" name="PassWord" type="password" placeholder="Password" class="form-control"
+                       required>
+                <i class="zmdi zmdi-lock"></i>
+            </div>
+        <button type="submit" name="register-submit">Login
+                <i class="zmdi zmdi-arrow-right"></i>
+            </button>
+        </form>
+    </div>
+    {% endblock %}

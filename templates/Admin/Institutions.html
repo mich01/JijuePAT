@@ -1,0 +1,412 @@
+{% extends "templates/Admintemplate.html" %}
+{% block content %}
+            <div align="center">
+                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#InstitutionLevel">
+                    Add Institution Level
+                </button>
+                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#modal-default">
+                    Add Institution
+                </button>
+                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#Assign-Authority">
+                    Assign Institution Authority
+                </button>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+                <table id="levelInstitution" class="table table-bordered table-striped">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Institution Type</th>
+                        <th>Description</th>
+                        <th>Created</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for u in Level_Institutions %}
+                    <tr>
+                        <td>{{u.LevelID}}</td>
+                        <td>{{u.LevelType}}</td>
+                        <td>{{u.Description}}</td>
+                        <td> {{u.timestamp}}</td>
+                        <td>
+                            <!-- Tasks: style can be found in dropdown.less -->
+                            <l class="dropdown tasks-menu">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                    <i class="fa fa-fw fa-gear"></i>
+                                </a>
+                                <ul class="dropdown-menu pull-right">
+                                    <li data-toggle="modal" data-target="#EditLevel{{u.LevelID }}" data-id="{{u.id}}"><i
+                                            class="fa fa-fw fa-edit"></i>Edit
+                                    </li>
+                                    <li data-toggle="modal" data-target="#{{u.LevelID }}" data-id="{{u.LevelID}}"><i
+                                            class="fa fa-fw fa-trash"></i> Delete</li>
+                                </ul>
+                            </l>
+                        </td>
+                        <!--- New Institution Level -->
+    <div id="EditLevel{{u.LevelID }}" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Add institution Level</h4>
+                </div>
+                <div class="modal-body">
+                    <form action="{{url_for('UpdateInstitutionLevel')}}" method="post">
+                        <label class="col-sm-2 control-label">Type</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" name="InstType" value="{{u.LevelType}}">
+                        </div>
+                        <br>
+                        <br>
+                        <label class="col-sm-2 control-label">Description</label>
+                        <div class="col-sm-10">
+                            <textarea class="form-control" name="Description" rows="3"
+                                      placeholder="Enter ..." >{{u.Description}}</textarea>
+                            <br>
+                            <br>
+                        </div>
+                        <input type="hidden" name="TID" value="{{u.LevelID}}">
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Update</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- End of Modal --->
+                        <div id="{{u.LevelID}}" class="modal fade" role="dialog">
+                            <div class="modal-dialog">
+
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                        <h4 class="modal-title">
+                                            Are you Sure you want to delete the below Level?
+                                            </h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        {{u.LevelType}}
+                                    </div>
+                                    <form method="POST" action="{{url_for('deleteInstitutionLevel')}}">
+                                    <div class="modal-footer">
+                                        <input type="hidden" name="LevelID" value="{{u.LevelID}}">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel
+                                        </button>
+                                         <button type="submit" class="btn btn-danger">Delete</button>
+                                    </div>
+                                        </form>
+                                </div>
+
+                            </div>
+                        </div>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="box-body">
+                <table id="example1" class="table table-bordered table-striped">
+                    <thead>
+                    <tr>
+                        <th>InstitutionID</th>
+                        <th>Institution Name</th>
+                        <th>InstitutionAddress</th>
+                        <th>Geo Map</th>
+                        <th>Institution Level</th>
+                        <th>Authority ID</th>
+                        <th>timestamp</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for u in Institution_List %}
+                    <tr>
+                        <td>{{u.InstitutionID}}</td>
+                        <td>{{u.InstitutionName}}</td>
+                        <td>{{u.InstitutionAddress}}</td>
+                        <td>{{u.GeoMap}}</td>
+                        <td>{{u.LevelType}}</td>
+                        <td>{{u.Sur_Name}} {{u.Other_Names}}</td>
+                        <td>{{u.timestamp}}</td>
+                        <td> <!-- Tasks: style can be found in dropdown.less -->
+                            <l class="dropdown tasks-menu">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                    <i class="fa fa-fw fa-gear"></i>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li data-toggle="modal" data-target="#UpdateInstitution{{u.InstitutionID}}" data-id="{{u.InstitutionID}}"><i
+                                            class="fa fa-fw fa-edit"></i> Edit
+                                    </li>
+                                    <li data-toggle="modal" data-target="#{{u.InstitutionID }}" data-id="{{u.InstitutionID}}"><i
+                                            class="fa fa-fw fa-trash"></i> Delete</li>
+                                </ul>
+                            </l>
+                        </td>
+                        <!--- Modal Forms -->
+    <div class="modal fade" id="UpdateInstitution{{u.InstitutionID}}">
+        <div class="modal-dialog">
+            <form method="post" action="{{url_for('UpdateInstitution')}}">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">Update Institution</h4>
+                    </div>
+                    <div class="modal-body">
+
+                        <div class="box-body">
+
+
+                            <label class="col-sm-2 control-label">Institute Name</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" name="InstitutionName"
+                                       value="{{u.InstitutionName}}">
+                                <br>
+                            </div>
+
+                            <br>
+                            <label class="col-sm-2 control-label">Address</label>
+                            <div class="col-sm-10">
+                                <textarea class="form-control" name="Address" rows="3">
+                                    {{u.InstitutionAddress}}</textarea>
+                                <br>
+                            </div>
+
+                            <br>
+                            <label class="col-sm-2 control-label">GeoMap</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" name="geoMap" value="{{u.GeoMap}}">
+                                <br>
+                            </div>
+                            <br>
+                            <label class="col-sm-2 control-label">Institution Level</label>
+                            <div class="col-sm-10">
+                                <select class="form-control select2" name="InstitutionLevel">
+                                    <option selected="selected" value="{{u.InstitutionLevel}}">{{u.LevelType}}</option>
+                                    {% for j in Level_Institutions %}
+                                    <option value="{{j.LevelID}}">{{j.LevelType}}</option>
+                                    {% endfor %}
+                                </select>
+                                <br>
+                            </div>
+                            <br>
+                        </div>
+                        <!-- /.box-body -->
+
+                    </div>
+                    <input type="hidden" name="IID" value="{{u.InstitutionID}}">
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Update Institution</button>
+                    </div>
+                </div>
+            </form>
+            <!-- /.modal-content -->
+        </div>
+
+        <!-- /.modal-dialog -->
+    </div>
+                        <!-- end of Update Institution-->
+                        <div id="{{u.InstitutionID}}" class="modal fade" role="dialog">
+                            <div class="modal-dialog">
+
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                        <h4 class="modal-title">
+                                            Are you Sure you want to delete the below Institution?
+                                            </h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        {{u.InstitutionName}}
+                                    </div>
+                                    <form method="POST" action="{{url_for('deleteInstitution')}}">
+                                    <div class="modal-footer">
+                                        <input type="hidden" name="InstitutionID" value="{{u.InstitutionID}}">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel
+                                        </button>
+                                         <button type="submit" class="btn btn-danger">Delete</button>
+                                    </div>
+                                        </form>
+                                </div>
+
+                            </div>
+                        </div>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+    <!--- Modal Forms -->
+    <div class="modal fade" id="modal-default" data-id="">
+        <div class="modal-dialog">
+            <form method="post" action="{{url_for('AddInstitution')}}">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">Default Modal</h4>
+                    </div>
+                    <div class="modal-body">
+
+                        <div class="box-body">
+                            <label class="col-sm-2 control-label">Institute Name</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" name="InstitutionName"
+                                       placeholder="InstitutionName">
+                                <br>
+                            </div>
+
+                            <br>
+                            <label class="col-sm-2 control-label">Address</label>
+                            <div class="col-sm-10">
+                                <textarea class="form-control" name="Address" rows="3"
+                                          placeholder="Enter ..."></textarea>
+                                <br>
+                            </div>
+
+                            <br>
+                            <label class="col-sm-2 control-label">GeoMap</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" name="geoMap" placeholder="Sur Name">
+                                <br>
+                            </div>
+                            <br>
+                            <label class="col-sm-2 control-label">Institution Level</label>
+                            <div class="col-sm-10">
+                                <select class="form-control select2" name="InstitutionLevel" >
+                                    {% for u in Level_Institutions %}
+                                    <option value="{{u.LevelID}}">{{u.LevelType}}</option>
+                                    {% endfor %}
+                                </select>
+                                <br>
+                            </div>
+                            <br>
+                        </div>
+                        <!-- /.box-body -->
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Add Institution</button>
+                    </div>
+                </div>
+            </form>
+            <!-- /.modal-content -->
+        </div>
+
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+    <!-- End of Modal -->
+    <!-- Assign Intitution Authority -->
+    <!--- Modal Forms -->
+    <div class="modal fade" id="Assign-Authority" data-id="uid">
+        <div class="modal-dialog">
+            <form method="post" action="{{url_for('AssignAuthority')}}">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">Default Modal</h4>
+                    </div>
+                    <div class="modal-body">
+
+                        <div class="box-body">
+                            <div class="form-group">
+                                <label>Institution</label>
+                                <select class="form-control select2" name="Institution" style="width: 100%;">
+                                    <option selected="selected">
+                                    </option>
+                                    {% for u in Institution_List %}
+                                    <option value="{{u.InstitutionID}}">{{u.InstitutionName}}</option>
+                                    {% endfor %}
+                                </select>
+                                <label>Institution Level</label>
+                                <select class="form-control select2" name="Authotiy" style="width: 100%;">
+                                    <option selected="selected">
+                                    </option>
+                                    {% for u in All_Users %}
+                                    <option value="{{u.id}}">{{u.Sur_Name}} {{u.Other_Names}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <br>
+                        </div>
+                        <!-- /.box-body -->
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Assign Authority</button>
+                    </div>
+                </div>
+            </form>
+            <!-- /.modal-content -->
+        </div>
+
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- End Modal -->
+    <!--- New Institution Level -->
+    <div id="InstitutionLevel" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Add institution Level</h4>
+                </div>
+                <div class="modal-body">
+                    <form id="SearchForm" action="{{url_for('AddInstitution_Level')}}" method="post">
+                        <label class="col-sm-2 control-label">Type</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" name="InstType" placeholder="InstitutionType">
+                        </div>
+                        <br>
+                        <br>
+                        <label class="col-sm-2 control-label">Description</label>
+                        <div class="col-sm-10">
+                            <textarea class="form-control" name="Description" rows="3"
+                                      placeholder="Enter ..."></textarea>
+                            <br>
+                            <br>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Add Institution Type</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- End of Modal --->
+    <!--- Search Institution -->
+    <div id="delete-Modal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Search Institution</h4>
+                </div>
+                <div class="modal-body">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}

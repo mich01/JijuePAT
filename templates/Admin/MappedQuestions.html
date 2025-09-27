@@ -1,0 +1,200 @@
+{% extends "templates/Admintemplate.html" %}
+{% block content %}
+
+<div align="center">
+    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#CreateTestModal">
+        Create Test
+    </button>
+</div>
+<div class="box-body">
+    <table id="levelInstitution" class="table table-bordered table-striped">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Test Name</th>
+            <th>Description</th>
+            <th>Creator</th>
+            <th>Status</th>
+            <th>Date Created</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for u in Test_List %}
+        <tr>
+            <td>{{u.ID}}</td>
+            <td>{{u.Name}}</td>
+            <td>{{u.Description}}</td>
+            <td>{{u.UserName}}</td>
+            <td>{{u.Status}}</td>
+            <td>{{u.timestamp}}</td>
+            <td>
+                <!-- Tasks: style can be found in dropdown.less -->
+                <l class="dropdown tasks-menu">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        <i class="fa fa-fw fa-gear"></i>
+                    </a>
+                    <ul class="dropdown-menu pull-right">
+                        <li data-toggle="modal" data-target="#EditTest{{u.ID }}"><i
+                                class="fa fa-fw fa-edit"></i>Edit
+                        </li>
+                        <li data-toggle="modal" data-target="#MappQuestions{{u.ID }}"><i
+                                class="fa fa-fw fa-edit"></i>Set Questions
+                        </li>
+                        <li data-toggle="modal" data-target="#Delete{{u.ID }}"><i
+                                class="fa fa-fw fa-trash"></i> Delete
+                        </li>
+                    </ul>
+                </l>
+            </td>
+            <!--- New Institution Level -->
+            <div id="EditTest{{u.ID}}" class="modal fade" role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <form method="post" action="{{url_for('editTests')}}">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span></button>
+                                    <h4 class="modal-title">Create Test</h4>
+                                </div>
+                                <div class="modal-body">
+
+                                    <div class="box-body">
+                                        <label class="col-sm-2 control-label">Test Name</label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control" name="Name" value="{{u.Name}}">
+                                            <br>
+                                        </div>
+                                        <br>
+                                        <label class="col-sm-2 control-label">Set Status</label>
+                                        <div class="col-sm-10">
+                                            <select name="Status" class="form-control select2">
+                                                <option selected="selected" value="{{u.Status}}">{{u.Status}}</option>
+                                                <option value="Open">Open</option>
+                                                <option value="Closed">Closed</option>
+                                            </select>
+                                            <br>
+                                            <br>
+                                        </div>
+                                        <br>
+                                        <label class="col-sm-2 control-label">Description</label>
+                                        <div class="col-sm-10">
+                                <textarea class="form-control" name="Description" rows="3"
+                                          placeholder="Enter ...">{{u.Description}}</textarea>
+                                            <br>
+                                        </div>
+                                        <br>
+                                        <br>
+                                    </div>
+                                    <input type="hidden" value="{{u.ID}}" name="ID"/>
+                                    <!-- /.box-body -->
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close
+                                    </button>
+                                    <button type="submit" class="btn btn-primary">Edit Test</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+            <div id="Delete{{u.ID}}" class="modal fade" role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">
+                                Are you Sure you want to delete the below Test?
+                            </h4>
+                        </div>
+                        <div class="modal-body">
+                            {{u.Name}}
+                        </div>
+                        <form method="POST" action="{{url_for('DeleteTest')}}">
+                            <div class="modal-footer">
+                                <input type="hidden" name="ID" value="{{u.ID}}">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel
+                                </button>
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div id="MappQuestions{{u.ID}}" class="modal fade" role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <form action="#" method="post">
+                            {%for Q in Questions_List%}
+                            <input type="checkbox" name="check_list[]" value="{{Q.ID}}"><label>{{Q.Question}}</label><br/>
+                            {% endfor %}
+                            <input type="checkbox" name="check_list[]" value="C/C++"><label>C/C++</label><br/>
+                            <input type="checkbox" name="check_list[]" value="Java"><label>Java</label><br/>
+                            <input type="checkbox" name="check_list[]" value="PHP"><label>PHP</label><br/>
+                            <div class="modal-footer">
+                        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Create Test</button>
+                    </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <div class="modal fade" id="CreateTestModal">
+        <div class="modal-dialog">
+            <form method="post" action="{{url_for('createTest')}}">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">Create Test</h4>
+                    </div>
+                    <div class="modal-body">
+
+                        <div class="box-body">
+                            <label class="col-sm-2 control-label">Test Name</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" name="Name">
+                                <br>
+                            </div>
+                            <br>
+                            <label class="col-sm-2 control-label">Set Status</label>
+                            <div class="col-sm-10">
+                                <select name="Status" class="form-control select2">
+                                    <option value="Active">Open</option>
+                                    <option value="Active">Closed</option>
+                                </select>
+                                <br>
+                                <br>
+                            </div>
+                            <br>
+                            <label class="col-sm-2 control-label">Description</label>
+                            <div class="col-sm-10">
+                                <textarea class="form-control" name="Description" rows="3"
+                                          placeholder="Enter ..."></textarea>
+                                <br>
+                            </div>
+                            <br>
+                            <br>
+                        </div>
+                        <!-- /.box-body -->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Create Test</button>
+                    </div>
+                </div>
+            </form>
+            <!-- /.modal-content -->
+        </div>
+
+        <!-- /.modal-dialog -->
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,142 @@
+{% extends "templates/Admintemplate.html" %}
+{% block content %}
+ <!-- Content Header (Page header) -->
+        <section class="content-header">
+           <H1>
+               Users and Roles Module
+           </H1>
+    {% with messages = get_flashed_messages() %}
+	  {% if messages %}
+	    {% for message in messages %}
+		  <div class="alert alert-warning alert-dismissible" role="alert">
+		  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+			{{message}}
+		  </div>
+		{% endfor %}
+	  {% endif %}
+	{% endwith %}
+    <ol class="breadcrumb">
+        <li><a href="{{url_for('dashboard')}}"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li class="active">Users</li>
+    </ol>
+</section>
+        <section class="content">
+ <section class="content">
+            <div align="center">
+                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#modal-default">
+                    Add New User
+                </button>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+                <table id="example1" class="table table-bordered table-striped">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>User Name</th>
+                        <th>Surname</th>
+                        <th>Other Names</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Current Status</th>
+                        <th>Gender</th>
+                        <th>Created</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for u in User_List %}
+                    <tr>
+                        <td>{{u.id}}</td>
+                        <td>{{u.UserName}}</td>
+                        <td>{{u.Sur_Name}}</td>
+                        <td>{{u.Other_Names}}</td>
+                        <td>{{u.EmailAddress}}</td>
+                        <td>{{u.Role_type}}</td>
+                        <td>{{u.Status_type}}</td>
+                        <td>{{u.Gender}}</td>
+                        <td>{{u.Date_Created}}</td>
+                        <td>
+                            <!-- Tasks: style can be found in dropdown.less -->
+                            <l class="dropdown tasks-menu">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                    <i class="fa fa-fw fa-gear"></i>
+                                </a>
+                                <ul class="dropdown-menu  pull-right">
+                                    <li data-toggle="modal" data-target="#AssignRole{{u.id}}">Change Role</li>
+                                    <li data-toggle="modal" data-target="#ResetPassword{{u.id}}">Reset Password</li>
+                                </ul>
+                            </l>
+                        </td>
+                        <div id="AssignRole{{u.id}}" class="modal fade" role="dialog">
+                            <form class="changeRoles" action="{{url_for('ReassignRole')}}" method="post">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                        <h4 class="modal-title">Reassign User Role for {{u.Sur_Name}} {{u.Other_Names}}</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <label class="col-sm-2 control-label">Select Type</label>
+                                            <div class="col-sm-10">
+                                                <input type="hidden" name="UserID" value="{{u.id}}">
+                                                <select name="Role" class="form-control select2" required>
+                                                    <option selected="selected" value="{{u.Role_ID}}">{{u.Role_type}}</option>
+                                                        {% for R in Roles_List %}
+                                                    <option value="{{R.Role_ID}}">{{R.Role_type}}</option>
+                                                    {% endfor %}
+                                                </select>
+                                                <br>
+                                                <br>
+                                            </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                        <button type="submit" name="Submit" class="btn btn-success">Update
+                                        </button>
+                                    </div>
+                                </div>
+
+                            </div>
+                            </form>
+                        </div>
+                        <div id="ResetPassword{{u.id}}" class="modal fade" role="dialog">
+                            <form class="changeRoles" action="{{url_for('ResetPass')}}" method="post">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                        <h4 class="modal-title">Reset password for {{u.EmailAddress}}</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        Click on the reset button to reset the password for {{u.EmailAddress}}
+                                        <input type="hidden" name="UserID" value="{{u.id}}"/>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                        <button type="submit" name="Submit" class="btn btn-success">Reset Password
+                                        </button>
+                                    </div>
+                                </div>
+
+                            </div>
+                            </form>
+                        </div>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    <!--- Modal Forms -->
+    <div class="modal fade" id="modal-default">
+        <div class="modal-dialog">
+            <!-- /.modal-content -->
+        </div>
+
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+    <!-- End of Modal -->
+        </section>
+{% endblock %}

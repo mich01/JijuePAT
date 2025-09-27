@@ -1,0 +1,63 @@
+{% extends "templates/client.html" %}
+{% block content %}
+<section class="top-content">
+    {% with messages = get_flashed_messages() %}
+	  {% if messages %}
+	    {% for message in messages %}
+		  <div class="alert alert-warning alert-dismissible" role="alert">
+		  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+			{{message}}
+		  </div>
+		{% endfor %}
+	  {% endif %}
+	{% endwith %}
+</section>
+        <!-- Top content -->
+        <div class="top-content">
+            <div class="container-fluid">
+                <header class="rad-page-title">
+            <div class="row breadcrumbs-row" style="float: right;">
+                <ul class="breadcrumbs">
+                     Home&nbsp;
+                </ul>
+            </div>
+        </header>
+                <div id="carouselExample" class="carousel slide z-depth-1-half" data-ride="carousel" data-interval="200">
+                    <div class="carousel-inner row w-100 mx-auto" role="listbox">
+                        {% for TL in Test_List%}
+                        {% if loop.index ==1 %}
+                        <div class="carousel-item card col-12 col-sm-6 col-md-4 col-lg-3 active">
+                            {% else %}
+                        <div class="carousel-item card col-12 col-sm-6 col-md-4 col-lg-3 ">
+                            {% endif %}
+                            <div class="card__side card__side--front-all">
+                                <div class="card__title card__title--all">
+                                    <h4 class="card__heading">{{TL.Name}}</h4>
+                                </div>
+                            </div>
+                            <div class="card__side card__side--back card__side--back-all">
+                                <div class="card__cta">
+                                    <div class="card__test-box">
+                                        <p class="card__test-details">{{TL.Description}}</p>
+                                    </div>
+                                    <form action="{{url_for('TakeTest')}}" method="post">
+                                        <input type="hidden" name="TestSelected" id="TestSelected" value="{{TL.ID}}">
+                                    <input type="submit" class="btn btn--green" value="Take Test"></input>
+                                    </form>
+                                </div>
+                            </div>
+                    </div>
+                        {% endfor %}
+                    </div>
+                            <a class="carousel-control-prev" href="#carouselExample" role="button" data-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="carousel-control-next" href="#carouselExample" role="button" data-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Next</span></a>
+                        </div>
+                </div>
+            </div>
+
+{% endblock %}
